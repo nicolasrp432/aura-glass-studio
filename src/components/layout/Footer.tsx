@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
-import { Phone, Mail, MapPin, Instagram, Facebook } from "lucide-react";
+import { Phone, Mail, MapPin, Instagram, Facebook, Train } from "lucide-react";
+
+const TREATWELL_LINK = "https://www.treatwell.es/establecimiento/mani-pedi-1/";
 
 const Footer = () => {
   return (
@@ -15,12 +17,14 @@ const Footer = () => {
           <p className="text-white/80 mb-8 max-w-xl mx-auto">
             Reserva tu cita hoy y déjate mimar por nuestras expertas
           </p>
-          <Link
-            to="/contacto"
+          <a
+            href={TREATWELL_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-block bg-white text-primary px-8 py-4 rounded-full font-semibold hover:shadow-xl transition-all hover:-translate-y-0.5"
           >
             Reservar Ahora
-          </Link>
+          </a>
         </div>
       </div>
 
@@ -35,13 +39,17 @@ const Footer = () => {
               </div>
               <div>
                 <h3 className="font-display text-xl font-semibold">Mani Pedi</h3>
-                <p className="text-xs text-white/60 tracking-widest uppercase">Las Arenas</p>
+                <p className="text-xs text-white/60 tracking-widest uppercase">Getxo</p>
               </div>
             </div>
-            <p className="text-white/70 text-sm leading-relaxed">
-              Tu destino de belleza premium en Las Palmas. Expertos en manicura, 
-              pedicura y tratamientos de uñas.
+            <p className="text-white/70 text-sm leading-relaxed mb-4">
+              Tu oasis de belleza y bienestar en Getxo. Especialistas en uñas 
+              con ambiente moderno y elegante.
             </p>
+            <div className="flex items-center gap-2 text-white/60 text-sm">
+              <Train size={14} />
+              <span>A 3 min del metro Areeta</span>
+            </div>
           </div>
 
           {/* Quick Links */}
@@ -66,18 +74,18 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Services */}
+          {/* Schedule */}
           <div>
-            <h4 className="font-display text-lg font-semibold mb-6">Servicios</h4>
-            <ul className="space-y-3">
-              {["Manicura Clásica", "Manicura Gel", "Pedicura Spa", "Nail Art", "Tratamientos"].map(
-                (service) => (
-                  <li key={service}>
-                    <span className="text-white/70 text-sm">{service}</span>
-                  </li>
-                )
-              )}
+            <h4 className="font-display text-lg font-semibold mb-6">Horario</h4>
+            <ul className="space-y-2 text-sm text-white/70">
+              <li className="flex justify-between"><span>Lunes - Viernes</span><span>10:00 - 20:00</span></li>
+              <li className="flex justify-between"><span>Sábado</span><span>10:00 - 14:00</span></li>
+              <li className="flex justify-between"><span>Domingo</span><span>Cerrado</span></li>
             </ul>
+            <div className="mt-6">
+              <p className="text-xs text-white/50 mb-2">Marcas que utilizamos:</p>
+              <p className="text-xs text-white/70">OPI, Semilac, Kinetics, Masglo, Peggy Sage</p>
+            </div>
           </div>
 
           {/* Contact */}
@@ -86,11 +94,11 @@ const Footer = () => {
             <ul className="space-y-4">
               <li>
                 <a
-                  href="tel:+34928123456"
+                  href="tel:+34944123456"
                   className="flex items-center gap-3 text-white/70 hover:text-white transition-colors text-sm"
                 >
                   <Phone size={16} />
-                  <span>+34 928 123 456</span>
+                  <span>+34 944 123 456</span>
                 </a>
               </li>
               <li>
@@ -105,7 +113,7 @@ const Footer = () => {
               <li>
                 <span className="flex items-start gap-3 text-white/70 text-sm">
                   <MapPin size={16} className="flex-shrink-0 mt-0.5" />
-                  <span>C/ Las Arenas, 15<br />35010 Las Palmas de GC</span>
+                  <span>Urkijo Kalea, 15<br />48930 Getxo, Bizkaia</span>
                 </span>
               </li>
             </ul>
@@ -135,7 +143,7 @@ const Footer = () => {
         {/* Bottom */}
         <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-white/50 text-sm">
-            © {new Date().getFullYear()} Mani Pedi Las Arenas. Todos los derechos reservados.
+            © {new Date().getFullYear()} Mani Pedi Getxo. Todos los derechos reservados.
           </p>
           <div className="flex gap-6 text-sm text-white/50">
             <a href="#" className="hover:text-white/80 transition-colors">

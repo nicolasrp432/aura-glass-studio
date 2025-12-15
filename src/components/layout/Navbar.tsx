@@ -4,6 +4,8 @@ import { Menu, X, Phone, MapPin, ShoppingBag } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "@/stores/cartStore";
 
+const TREATWELL_LINK = "https://www.treatwell.es/establecimiento/mani-pedi-1/";
+
 const navLinks = [
   { name: "Inicio", href: "/" },
   { name: "Servicios", href: "/servicios" },
@@ -47,19 +49,19 @@ const Navbar = () => {
           <div className="container mx-auto px-6 py-2 flex justify-between items-center text-sm">
             <div className="flex items-center gap-6 text-muted-foreground">
               <a
-                href="tel:+34928123456"
+                href="tel:+34944123456"
                 className="flex items-center gap-2 hover:text-primary transition-colors"
               >
                 <Phone size={14} />
-                <span>+34 928 123 456</span>
+                <span>+34 944 123 456</span>
               </a>
               <span className="flex items-center gap-2">
                 <MapPin size={14} />
-                <span>C/ Las Arenas, 15, Las Palmas</span>
+                <span>Urkijo Kalea, 15, Getxo</span>
               </span>
             </div>
             <div className="text-muted-foreground">
-              Lun - Sáb: 10:00 - 20:00
+              Lun - Vie: 10:00 - 20:00 | Sáb: 10:00 - 14:00
             </div>
           </div>
         </div>
@@ -79,7 +81,7 @@ const Navbar = () => {
                   Mani Pedi
                 </h1>
                 <p className="text-xs text-muted-foreground tracking-widest uppercase">
-                  Las Arenas
+                  Getxo
                 </p>
               </div>
             </Link>
@@ -125,9 +127,14 @@ const Navbar = () => {
                 )}
               </Link>
 
-              <Link to="/contacto" className="hidden md:block btn-primary text-sm py-3 px-6">
+              <a 
+                href={TREATWELL_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden md:block btn-primary text-sm py-3 px-6"
+              >
                 Reservar Cita
-              </Link>
+              </a>
 
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
@@ -196,9 +203,14 @@ const Navbar = () => {
                 transition={{ delay: 0.4 }}
                 className="mt-8"
               >
-                <Link to="/contacto" className="block w-full btn-primary text-center">
+                <a 
+                  href={TREATWELL_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full btn-primary text-center"
+                >
                   Reservar Cita
-                </Link>
+                </a>
               </motion.div>
 
               <motion.div
@@ -208,11 +220,11 @@ const Navbar = () => {
                 className="mt-8 pt-8 border-t border-border"
               >
                 <a
-                  href="tel:+34928123456"
+                  href="tel:+34944123456"
                   className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors"
                 >
                   <Phone size={18} />
-                  <span>+34 928 123 456</span>
+                  <span>+34 944 123 456</span>
                 </a>
               </motion.div>
             </motion.div>

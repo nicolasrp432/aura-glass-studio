@@ -1,0 +1,237 @@
+{
+  "services": [
+    {
+      "id": "manicura_tradicional",
+      "category": "Manicura y Uñas",
+      "name": "Manicura Tradicional",
+      "short_description": "Tratamiento clásico de manicura con acabado impecable.",
+      "description": "Manicura completa que incluye limado, cuidado de cutículas y esmaltado tradicional para unas manos perfectas.",
+      "price": 19.50,
+      "duration": "45 min",
+      "image_url": "/assets/services/manicura.jpg",
+      "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/"
+    },
+    {
+      "id": "manicura_semipermanente",
+      "category": "Manicura y Uñas",
+      "name": "Manicura Semipermanente",
+      "short_description": "Esmaltado de larga duración con acabado brillante.",
+      "description": "Manicura con esmaltado semipermanente que dura hasta 3 semanas sin perder brillo ni color.",
+      "price": 27.50,
+      "duration": "60 min",
+      "image_url": "/assets/services/manicura.jpg",
+      "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/"
+    },
+    {
+      "id": "baby_boomer",
+      "category": "Manicura y Uñas",
+      "name": "Baby Boomer",
+      "short_description": "El clásico degradado francés en su versión más elegante.",
+      "description": "Técnica de uñas con degradado suave del rosa al blanco, el look más sofisticado y atemporal.",
+      "price": 55.20,
+      "duration": "1h 45min",
+      "image_url": "/assets/services/manicura.jpg",
+      "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/",
+      "popular": true
+    },
+    {
+      "id": "pedicura_semipermanente",
+      "category": "Pedicura y Pies",
+      "name": "Pedicura Semipermanente",
+      "short_description": "Pedicura completa con esmaltado de larga duración.",
+      "description": "Tratamiento completo de pies con esmaltado semipermanente para un acabado perfecto y duradero.",
+      "price": 35.00,
+      "duration": "60 min",
+      "image_url": "/assets/services/pedicura.jpg",
+      "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/"
+    },
+    {
+      "id": "lifting_pestanas",
+      "category": "Pestañas y Cejas",
+      "name": "Lifting de Pestañas",
+      "short_description": "Curvatura natural de pestañas para una mirada impactante.",
+      "description": "Realza la mirada con un lifting que alarga y curva tus pestañas de forma natural.",
+      "price": 44.00,
+      "duration": "60 min",
+      "image_url": "/assets/services/lifting.jpg",
+      "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/",
+      "popular": true
+    },
+    {
+      "id": "depilacion_cejas_hilo",
+      "category": "Pestañas y Cejas",
+      "name": "Depilación de Cejas con Hilo",
+      "short_description": "Técnica de hilo para un diseño de cejas preciso.",
+      "description": "Diseño profesional y depilación con hilo, la técnica más higiénica y precisa para pieles sensibles.",
+      "price": 12.00,
+      "duration": "20 min",
+      "image_url": "/assets/services/cejas.jpg",
+      "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/"
+    },
+    {
+      "id": "presoterapia_detox",
+      "category": "Tratamientos Corporales",
+      "name": "Presoterapia y Tratamiento Detox",
+      "short_description": "Tratamiento drenante para piernas cansadas y celulitis.",
+      "description": "Terapia de presión controlada que estimula la circulación, ayuda a eliminar toxinas y reduce la retención de líquidos.",
+      "price": 33.00,
+      "duration": "60 min",
+      "image_url": "/assets/services/presoterapia.jpg",
+      "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/",
+      "popular": true
+    },
+    {
+      "id": "maderoterapia",
+      "category": "Tratamientos Corporales",
+      "name": "Maderoterapia",
+      "short_description": "Masaje reductivo con instrumentos de madera.",
+      "description": "Técnica de masaje con herramientas de madera que ayuda a reducir medidas, combatir la celulitis y mejorar la circulación.",
+      "price": 49.60,
+      "duration": "60 min",
+      "image_url": "/assets/services/maderoterapia.jpg",
+      "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/"
+    },
+    {
+      "id": "tratamiento_celular",
+      "category": "Tratamientos Corporales",
+      "name": "Tratamiento Celular Corporal",
+      "short_description": "Tratamiento anticelulítico y reafirmante de alta gama.",
+      "description": "Tratamiento corporal intensivo que trabaja a nivel celular para combatir la celulitis y reafirmar la piel.",
+      "price": 73.50,
+      "duration": "60 min",
+      "image_url": "/assets/services/corporal.jpg",
+      "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/"
+    },
+    {
+      "id": "limpieza_facial",
+      "category": "Tratamientos Faciales",
+      "name": "Limpieza Facial Profesional",
+      "short_description": "Limpieza profunda para una piel radiante.",
+      "description": "Tratamiento esencial para mantener la piel sana, incluye vapor, extracción, mascarilla e hidratación.",
+      "price": 55.00,
+      "duration": "60 min",
+      "image_url": "/assets/services/facial.jpg",
+      "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/"
+    }
+  ],
+  "team": [
+    {
+      "id": 1,
+      "name": "Stefany",
+      "role": "Nail Artist Senior",
+      "specialty": "Manicura y Nail Art",
+      "rating": 5.0,
+      "reviews": 365,
+      "bio": "Especialista en diseños creativos y manicura semipermanente. Con su atención al detalle y técnica impecable, garantiza resultados excepcionales."
+    },
+    {
+      "id": 2,
+      "name": "Patty",
+      "role": "Esteticista",
+      "specialty": "Tratamientos de Uñas",
+      "rating": 4.9,
+      "reviews": 225,
+      "bio": "Profesional dedicada que combina técnica y calidez para que cada clienta se sienta especial y salga satisfecha."
+    },
+    {
+      "id": 3,
+      "name": "Valentina",
+      "role": "Esteticista",
+      "specialty": "Manicura y Pedicura",
+      "rating": 4.9,
+      "reviews": 205,
+      "bio": "Con su pasión por la belleza y atención personalizada, Valentina crea experiencias únicas para cada clienta."
+    },
+    {
+      "id": 4,
+      "name": "Diana",
+      "role": "Esteticista",
+      "specialty": "Tratamientos Corporales",
+      "rating": 4.9,
+      "reviews": 188,
+      "bio": "Experta en tratamientos corporales y masajes. Su enfoque profesional garantiza resultados visibles."
+    },
+    {
+      "id": 5,
+      "name": "Ximena",
+      "role": "Especialista en Pedicura",
+      "specialty": "Pedicura Spa",
+      "rating": 4.9,
+      "reviews": 47,
+      "bio": "Ximena es una gran profesional especializada en pedicuras y tratamientos de pies con técnica excepcional."
+    },
+    {
+      "id": 6,
+      "name": "Marcela",
+      "role": "Especialista en Cejas",
+      "specialty": "Depilación con Hilo",
+      "rating": 5.0,
+      "reviews": 11,
+      "bio": "Maestra en la técnica de depilación con hilo, crea diseños de cejas perfectos y personalizados."
+    }
+  ],
+  "testimonials": [
+    {
+      "id": 1,
+      "name": "Itxiar U.",
+      "date": "hace 2 días",
+      "content": "Una experiencia maravillosa!!! Ximena es una gran profesional!!! Gracias",
+      "service": "Pedicura",
+      "professional": "Ximena",
+      "rating": 5
+    },
+    {
+      "id": 2,
+      "name": "Gabriel",
+      "date": "hace 3 días",
+      "content": "Muy buen trabajo, trato excelente. Repetiremos",
+      "service": "Manicura semipermanente",
+      "professional": "Stefany",
+      "rating": 5
+    },
+    {
+      "id": 3,
+      "name": "Ane",
+      "date": "hace 3 días",
+      "content": "Perfecto como siempre, muy encantadoras y trabajo excepcional",
+      "service": "Manicura semipermanente",
+      "professional": "Stefany",
+      "rating": 5
+    },
+    {
+      "id": 4,
+      "name": "Ane",
+      "date": "hace 3 días",
+      "content": "Buen trabajo, trato excelente. Repito una y otra vez",
+      "service": "Depilación de cejas con hilo",
+      "professional": "Marcela",
+      "rating": 5
+    }
+  ],
+  "salonInfo": {
+    "name": "Mani Pedi",
+    "address": "Urkijo Kalea, 15",
+    "city": "Getxo",
+    "postalCode": "48930",
+    "province": "Bizkaia",
+    "country": "España",
+    "phone": "+34 944 123 456",
+    "email": "info@manipedi.es",
+    "rating": 4.9,
+    "totalReviews": 1500,
+    "treatwellLink": "https://www.treatwell.es/establecimiento/mani-pedi-1/",
+    "nearestTransport": "A 3 minutos a pie de la estación de metro de Areeta",
+    "ambiance": "Moderno y elegante",
+    "specialty": "Uñas",
+    "brands": ["Ainhoa Cosmetics", "Masglo", "OPI", "Kinetics", "Semilac", "Peggy Sage"],
+    "schedule": {
+      "monday": "10:00 - 20:00",
+      "tuesday": "10:00 - 20:00",
+      "wednesday": "10:00 - 20:00",
+      "thursday": "10:00 - 20:00",
+      "friday": "10:00 - 20:00",
+      "saturday": "10:00 - 14:00",
+      "sunday": "Cerrado"
+    }
+  }
+}
