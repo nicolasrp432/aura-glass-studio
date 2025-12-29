@@ -5,143 +5,135 @@ import heroImage from "@/assets/hero-manicure.jpg";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center pt-32 pb-20 overflow-hidden">
-      {/* Background Image with Overlay */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src={heroImage}
-          alt="Manicura profesional"
-          className="w-full h-full object-cover"
+    <section className="relative min-h-[90vh] lg:min-h-screen flex items-center pt-32 pb-20 overflow-hidden">
+      {/* Video Background with Enhanced Overlays */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <video
+          src="https://cdn.pixabay.com/video/2016/08/17/4493-178619623_tiny.mp4"
+          poster={heroImage}
+          className="w-full h-full object-cover scale-105"
+          autoPlay
+          muted
+          loop
+          playsInline
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+        {/* Modern multi-layer overlay for depth and readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/20 to-background/90" />
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="absolute inset-0 backdrop-blur-[2px]" />
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="max-w-4xl mx-auto text-center">
+          {/* Badge with glassmorphism */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-xl"
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center gap-2 glass-deco rounded-full px-5 py-2 mb-8 border-primary/20"
           >
-            {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 glass-deco rounded-full px-4 py-2 mb-6"
+            <Sparkles size={16} className="text-primary animate-pulse" />
+            <span className="text-xs sm:text-sm font-medium tracking-wide uppercase">Salón Premium en Las Arenas, Getxo</span>
+          </motion.div>
+
+          {/* Headline with advanced typography */}
+          <motion.h1
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="font-display text-5xl sm:text-7xl lg:text-8xl font-bold text-foreground leading-[1.1] mb-8 tracking-tight"
+          >
+            Tus manos merecen{" "}
+            <span className="text-gradient decoration-primary/30 underline-offset-8">
+              el mejor cuidado
+            </span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-lg sm:text-xl text-foreground/80 leading-relaxed mb-12 max-w-2xl mx-auto font-medium"
+          >
+            Descubre una experiencia única de manicura y pedicura en un ambiente
+            de lujo. Nuestras expertas transformarán tus uñas en obras de arte.
+          </motion.p>
+
+          {/* CTA Buttons with enhanced styles */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="flex flex-col sm:flex-row gap-5 justify-center mb-20"
+          >
+            <Link
+              to="/contacto"
+              className="btn-primary flex items-center justify-center gap-3 group px-10 py-5"
             >
-              <Sparkles size={16} className="text-primary" />
-              <span className="text-sm font-medium">Salón Premium en Las Palmas</span>
-            </motion.div>
+              Reservar Cita
+              <ArrowRight
+                size={20}
+                className="transition-transform group-hover:translate-x-1.5"
+              />
+            </Link>
+            <Link
+              to="/servicios"
+              className="btn-secondary flex items-center justify-center px-10 py-5 hover:bg-white/60"
+            >
+              Ver Servicios
+            </Link>
+          </motion.div>
 
-            {/* Headline */}
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
-              Tus manos merecen{" "}
-              <span className="text-gradient">el mejor cuidado</span>
-            </h1>
-
-            <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-              Descubre una experiencia única de manicura y pedicura en un ambiente 
-              de lujo. Nuestras expertas transformarán tus uñas en obras de arte.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4 mb-12">
-              <Link to="/contacto" className="btn-gold flex items-center gap-2 group">
-                Reservar Cita
-                <ArrowRight
-                  size={18}
-                  className="transition-transform group-hover:translate-x-1"
-                />
-              </Link>
-              <Link to="/servicios" className="btn-secondary">
-                Ver Servicios
-              </Link>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-6">
-              {[
-                { icon: Award, value: "10+", label: "Años Experiencia" },
-                { icon: Sparkles, value: "5K+", label: "Clientas Felices" },
-                { icon: Clock, value: "100%", label: "Productos Premium" },
-              ].map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 + index * 0.1 }}
-                  className="text-center"
-                >
+          {/* Stats with modern cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-10">
+            {[
+              { icon: Award, value: "10+", label: "Años Experiencia" },
+              { icon: Sparkles, value: "5K+", label: "Clientas Felices" },
+              { icon: Clock, value: "100%", label: "Productos Premium" },
+            ].map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
+                className="glass-card p-6 rounded-2xl flex flex-col items-center justify-center text-center group hover:scale-105 transition-all"
+              >
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                   <stat.icon
                     size={24}
-                    className="mx-auto mb-2 text-primary"
+                    className="text-primary"
                   />
-                  <p className="font-display text-2xl font-bold text-foreground">
-                    {stat.value}
-                  </p>
-                  <p className="text-xs text-muted-foreground">{stat.label}</p>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Right side - Decorative elements */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="hidden lg:block"
-          >
-            <div className="relative">
-              {/* Floating glass cards */}
-              <motion.div
-                animate={{ y: [0, -15, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-10 right-10 glass-content rounded-2xl p-6 shadow-glass"
-              >
-                <p className="font-display text-lg font-semibold mb-1">Manicura Gel</p>
-                <p className="text-muted-foreground text-sm">desde 25€</p>
-              </motion.div>
-
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute bottom-20 right-20 glass-content rounded-2xl p-6 shadow-glass"
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="flex -space-x-2">
-                    {[1, 2, 3].map((i) => (
-                      <div
-                        key={i}
-                        className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-white"
-                      />
-                    ))}
-                  </div>
-                  <span className="text-sm font-medium">+500</span>
                 </div>
-                <p className="text-xs text-muted-foreground">Reseñas 5 estrellas</p>
+                <p className="font-display text-3xl font-bold text-foreground mb-1">
+                  {stat.value}
+                </p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">{stat.label}</p>
               </motion.div>
-            </div>
-          </motion.div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* Scroll indicator with refinement */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2"
+        transition={{ delay: 1.5 }}
+        className="absolute bottom-12 left-1/2 -translate-x-1/2 hidden md:block"
       >
         <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="w-6 h-10 rounded-full border-2 border-muted-foreground/30 flex items-start justify-center p-2"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="flex flex-col items-center gap-2"
         >
-          <div className="w-1 h-2 rounded-full bg-primary" />
+          <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-bold">Scroll</span>
+          <div className="w-6 h-10 rounded-full border-2 border-primary/30 flex items-start justify-center p-1.5">
+            <motion.div
+              animate={{ height: [4, 12, 4] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-1 bg-primary rounded-full"
+            />
+          </div>
         </motion.div>
       </motion.div>
     </section>

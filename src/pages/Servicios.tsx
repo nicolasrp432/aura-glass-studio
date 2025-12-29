@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Clock, ArrowRight } from "lucide-react";
+import { Clock, ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
 import Layout from "@/components/layout/Layout";
+import { supabase } from "@/lib/supabase";
 import servicesData from "@/data/services.json";
 import manicureImg from "@/assets/services-manicure.jpg";
 import pedicureImg from "@/assets/services-pedicure.jpg";
@@ -26,29 +27,73 @@ const getImage = (category: string) => {
 
 const Servicios = () => {
   const [activeCategory, setActiveCategory] = useState("all");
-  const services = servicesData.services;
+  const [services, setServices] = useState(servicesData.services);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const filteredServices = activeCategory === "all" 
-    ? services 
+  useEffect(() => {
+    const fetchServices = async () => {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('services')
+        .select('*')
+        .order('id', { ascending: true });
+
+      if (!error && data && data.length > 0) {
+        setServices(data);
+      }
+      setIsLoading(false);
+    };
+
+    fetchServices();
+  }, []);
+
+  const filteredServices = activeCategory === "all"
+    ? services
     : services.filter((s) => s.category === activeCategory);
 
   return (
     <Layout>
-      <section className="pt-32 pb-16 relative z-10">
-        <div className="container mx-auto px-6 text-center">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <span className="inline-block text-primary font-medium mb-4 tracking-widest uppercase text-sm">Nuestros Servicios</span>
-            <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6">Tratamientos de belleza premium</h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">Utilizamos marcas premium: OPI, Semilac, Kinetics, Masglo, Peggy Sage y Ainhoa Cosmetics</p>
+      {/* Hero Section */}
+      <section className="pt-40 pb-20 relative overflow-hidden">
+        <div className="orb orb-turquoise top-[-10%] left-[-10%] w-[40%] h-[40%]" />
+        <div className="container mx-auto px-6 text-center relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <span className="flex items-center justify-center gap-2 text-primary font-bold mb-4 tracking-[0.3em] uppercase text-xs">
+              <Sparkles size={14} /> Nuestros Servicios <Sparkles size={14} />
+            </span>
+            <h1 className="font-display text-5xl md:text-7xl font-bold text-foreground mb-8 leading-tight">
+              Tratamientos de <br />
+              <span className="text-primary italic">Belleza Premium</span>
+            </h1>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
+              Descubre una experiencia de cuidado personalizada con marcas de élite:
+              OPI, Semilac, Kinetics y Masglo.
+            </p>
           </motion.div>
         </div>
       </section>
 
-      <section className="sticky top-24 z-30 pb-6">
+      {/* Categories Filter */}
+      <section className="sticky top-24 z-30 mb-12">
         <div className="container mx-auto px-6">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-content rounded-full p-2 inline-flex flex-wrap gap-2">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-content rounded-3xl p-2 flex flex-wrap justify-center gap-2 shadow-xl border-white/50"
+          >
             {categories.map((category) => (
-              <button key={category.id} onClick={() => setActiveCategory(category.id)} className={`px-5 py-2.5 rounded-full font-medium text-sm transition-all ${activeCategory === category.id ? "bg-primary text-primary-foreground shadow-lg" : "hover:bg-white/50 text-foreground"}`}>
+              <button
+                key={category.id}
+                onClick={() => setActiveCategory(category.id)}
+                className={`px-6 py-3 rounded-2xl font-semibold text-sm transition-all duration-300 ${activeCategory === category.id
+                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30"
+                  : "hover:bg-primary/5 text-foreground/70 hover:text-primary"
+                  }`}
+              >
                 {category.name}
               </button>
             ))}
@@ -56,33 +101,80 @@ const Servicios = () => {
         </div>
       </section>
 
-      <section className="section-padding pt-8 relative z-10">
+      {/* Services Grid */}
+      <section className="pb-32 relative z-10">
         <div className="container mx-auto px-6">
-          <motion.div layout className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <AnimatePresence mode="popLayout">
-              {filteredServices.map((service, index) => (
-                <motion.article key={service.id} layout initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.4, delay: index * 0.05 }} className="glass-card rounded-2xl overflow-hidden group">
-                  <div className="relative h-48 overflow-hidden">
-                    <img src={getImage(service.category)} alt={service.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                    {service.popular && <span className="absolute top-4 right-4 bg-accent text-white text-xs font-semibold px-3 py-1 rounded-full">Popular</span>}
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-3">
-                      <h3 className="font-display text-xl font-semibold">{service.name}</h3>
-                      <span className="text-primary font-black text-xl">{service.price}€</span>
+          {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+            </div>
+          ) : (
+            <motion.div layout className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+              <AnimatePresence mode="popLayout">
+                {filteredServices.map((service, index) => (
+                  <motion.article
+                    key={service.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.5, delay: index * 0.05 }}
+                    className="glass-card rounded-[2.5rem] overflow-hidden group flex flex-col h-full"
+                  >
+                    <div className="relative h-64 overflow-hidden">
+                      <img
+                        src={getImage(service.category)}
+                        alt={service.name}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      {service.popular && (
+                        <span className="absolute top-6 right-6 bg-accent text-white text-[10px] font-bold px-4 py-2 rounded-full uppercase tracking-widest shadow-lg">
+                          Popular
+                        </span>
+                      )}
                     </div>
-                    <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{service.short_description}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-1 text-sm text-muted-foreground"><Clock size={14} />{service.duration}</span>
-                      <a href={TREATWELL_LINK} target="_blank" rel="noopener noreferrer" className="text-primary font-medium text-sm flex items-center gap-1 group/link">
-                        Reservar<ArrowRight size={14} className="transition-transform group-hover/link:translate-x-1" />
-                      </a>
+
+                    <div className="p-8 flex flex-col flex-grow">
+                      <div className="flex items-start justify-between mb-4">
+                        <h3 className="font-display text-2xl font-bold group-hover:text-primary transition-colors">{service.name}</h3>
+                        <span className="text-primary font-black text-2xl">{service.price}€</span>
+                      </div>
+
+                      <p className="text-muted-foreground text-sm mb-6 leading-relaxed flex-grow">
+                        {service.short_description}
+                      </p>
+
+                      <div className="space-y-3 mb-8">
+                        <div className="flex items-center gap-3 text-sm text-foreground/80 font-medium">
+                          <CheckCircle2 size={16} className="text-primary" />
+                          <span>Resultados profesionales</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-foreground/80 font-medium">
+                          <CheckCircle2 size={16} className="text-primary" />
+                          <span>Productos de alta gama</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-6 border-t border-border">
+                        <span className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-widest">
+                          <Clock size={16} className="text-primary" /> {service.duration}
+                        </span>
+                        <a
+                          href={TREATWELL_LINK}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-primary font-bold text-sm group/link underline-accent"
+                        >
+                          RESERVAR <ArrowRight size={16} className="transition-transform group-hover/link:translate-x-1" />
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                </motion.article>
-              ))}
-            </AnimatePresence>
-          </motion.div>
+                  </motion.article>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          )}
         </div>
       </section>
     </Layout>

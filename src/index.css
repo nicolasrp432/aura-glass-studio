@@ -139,63 +139,54 @@
 @layer components {
   /* Glass Effects - Decorative */
   .glass-deco {
-    @apply bg-white/30 backdrop-blur-md border border-white/40 shadow-lg;
+    @apply bg-white/20 backdrop-blur-xl border border-white/30 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)];
   }
 
   /* Glass Effects - Content (High Readability) */
   .glass-content {
-    @apply bg-white/85 backdrop-blur-sm border border-white/20 shadow-sm;
+    @apply bg-white/70 backdrop-blur-lg border border-white/40 shadow-[0_4px_24px_0_rgba(0,0,0,0.04)];
   }
 
   /* Glass Card Hover */
   .glass-card {
-    @apply glass-content transition-all duration-300;
+    @apply glass-content transition-all duration-500 ease-out;
   }
 
   .glass-card:hover {
-    @apply bg-white/95 shadow-lg -translate-y-1;
-  }
-
-  /* Gradient Orbs */
-  .orb {
-    @apply fixed rounded-full pointer-events-none;
-    animation: float 20s ease-in-out infinite;
-  }
-
-  .orb-turquoise {
-    @apply bg-primary/20 blur-3xl;
-  }
-
-  .orb-gold {
-    @apply bg-[hsl(40,80%,75%)]/30 blur-3xl;
-  }
-
-  .orb-rose {
-    @apply bg-accent/20 blur-3xl;
+    @apply bg-white/90 shadow-[0_20px_50px_rgba(0,0,0,0.1)] -translate-y-2 border-primary/20;
   }
 
   /* Premium Button Variants */
   .btn-primary {
-    @apply bg-primary text-primary-foreground px-8 py-4 rounded-full font-semibold 
-           transition-all duration-300 hover:shadow-xl hover:shadow-primary/25 
-           hover:-translate-y-0.5 active:translate-y-0;
+    @apply relative overflow-hidden bg-primary text-primary-foreground px-8 py-4 rounded-full font-semibold 
+           transition-all duration-500 hover:shadow-[0_10px_30px_-10px_hsl(var(--primary))] 
+           hover:-translate-y-1 active:translate-y-0 active:scale-95;
+  }
+
+  .btn-primary::after {
+    content: '';
+    @apply absolute inset-0 bg-white/20 transform translate-x-[-100%] rotate-[35deg] transition-transform duration-700;
+  }
+
+  .btn-primary:hover::after {
+    @apply translate-x-[100%];
   }
 
   .btn-secondary {
     @apply glass-deco text-foreground px-8 py-4 rounded-full font-semibold 
-           transition-all duration-300 hover:bg-white/50 hover:-translate-y-0.5;
+           transition-all duration-500 hover:bg-white/40 hover:-translate-y-1 hover:border-primary/30;
   }
 
   .btn-gold {
-    @apply bg-gradient-to-r from-[hsl(40,70%,55%)] to-[hsl(35,80%,60%)] 
+    @apply bg-gradient-to-r from-gold to-[hsl(35,80%,60%)] 
            text-white px-8 py-4 rounded-full font-semibold 
-           transition-all duration-300 hover:shadow-xl hover:shadow-[hsl(40,70%,55%)]/30 
-           hover:-translate-y-0.5;
+           transition-all duration-500 hover:shadow-[0_10px_30px_-10px_hsl(var(--gold))] 
+           hover:-translate-y-1 active:scale-95;
   }
 
   /* Section styling */
   .section-padding {
-    @apply py-20 md:py-32 px-4 md:px-8;
+    @apply py-24 md:py-40 px-6 md:px-12;
   }
 
   /* Premium underline */
