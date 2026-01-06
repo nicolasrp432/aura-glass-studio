@@ -8,7 +8,7 @@
       "description": "Manicura completa que incluye limado, cuidado de cutículas y esmaltado tradicional para unas manos perfectas.",
       "price": 19.50,
       "duration": "45 min",
-      "image_url": "/assets/services/manicura.jpg",
+      "image_url": "/servicesimg/manicura tradicional.jpg",
       "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/"
     },
     {
@@ -19,7 +19,7 @@
       "description": "Manicura con esmaltado semipermanente que dura hasta 3 semanas sin perder brillo ni color.",
       "price": 27.50,
       "duration": "60 min",
-      "image_url": "/assets/services/manicura.jpg",
+      "image_url": "/servicesimg/manicura semipermanente.jpg",
       "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/"
     },
     {
@@ -30,7 +30,7 @@
       "description": "Técnica de uñas con degradado suave del rosa al blanco, el look más sofisticado y atemporal.",
       "price": 55.20,
       "duration": "1h 45min",
-      "image_url": "/assets/services/manicura.jpg",
+      "image_url": "/servicesimg/babyboomers.jpg",
       "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/",
       "popular": true
     },
@@ -42,7 +42,7 @@
       "description": "Tratamiento completo de pies con esmaltado semipermanente para un acabado perfecto y duradero.",
       "price": 35.00,
       "duration": "60 min",
-      "image_url": "/assets/services/pedicura.jpg",
+      "image_url": "/servicesimg/pedicura semi.jpg",
       "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/"
     },
     {
@@ -53,7 +53,7 @@
       "description": "Realza la mirada con un lifting que alarga y curva tus pestañas de forma natural.",
       "price": 44.00,
       "duration": "60 min",
-      "image_url": "/assets/services/lifting.jpg",
+      "image_url": "/servicesimg/Lash lifting  Cílios.jpg",
       "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/",
       "popular": true
     },
@@ -65,7 +65,7 @@
       "description": "Diseño profesional y depilación con hilo, la técnica más higiénica y precisa para pieles sensibles.",
       "price": 12.00,
       "duration": "20 min",
-      "image_url": "/assets/services/cejas.jpg",
+      "image_url": "/servicesimg/depilacion cejas hilo.jpg",
       "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/"
     },
     {
@@ -76,7 +76,7 @@
       "description": "Terapia de presión controlada que estimula la circulación, ayuda a eliminar toxinas y reduce la retención de líquidos.",
       "price": 33.00,
       "duration": "60 min",
-      "image_url": "/assets/services/presoterapia.jpg",
+      "image_url": "/servicesimg/Vuala Spa Presoterapia.jpg",
       "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/",
       "popular": true
     },
@@ -88,7 +88,7 @@
       "description": "Técnica de masaje con herramientas de madera que ayuda a reducir medidas, combatir la celulitis y mejorar la circulación.",
       "price": 49.60,
       "duration": "60 min",
-      "image_url": "/assets/services/maderoterapia.jpg",
+      "image_url": "/servicesimg/maderoterapia.jpg",
       "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/"
     },
     {
@@ -99,7 +99,7 @@
       "description": "Tratamiento corporal intensivo que trabaja a nivel celular para combatir la celulitis y reafirmar la piel.",
       "price": 73.50,
       "duration": "60 min",
-      "image_url": "/assets/services/corporal.jpg",
+      "image_url": "/servicesimg/descarga (9).jpg",
       "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/"
     },
     {
@@ -110,7 +110,7 @@
       "description": "Tratamiento esencial para mantener la piel sana, incluye vapor, extracción, mascarilla e hidratación.",
       "price": 55.00,
       "duration": "60 min",
-      "image_url": "/assets/services/facial.jpg",
+      "image_url": "/servicesimg/limpieza facial profesional.jpg",
       "treatwell_link": "https://www.treatwell.es/establecimiento/mani-pedi-1/"
     }
   ],
@@ -122,7 +122,8 @@
       "specialty": "Manicura y Nail Art",
       "rating": 5.0,
       "reviews": 365,
-      "bio": "Especialista en diseños creativos y manicura semipermanente. Con su atención al detalle y técnica impecable, garantiza resultados excepcionales."
+      "bio": "Especialista en diseños creativos y manicura semipermanente. Con su atención al detalle y técnica impecable, garantiza resultados excepcionales.",
+      "image_url": "/team/stefany.png"
     },
     {
       "id": 2,
@@ -131,7 +132,8 @@
       "specialty": "Tratamientos de Uñas",
       "rating": 4.9,
       "reviews": 225,
-      "bio": "Profesional dedicada que combina técnica y calidez para que cada clienta se sienta especial y salga satisfecha."
+      "bio": "Profesional dedicada que combina técnica y calidez para que cada clienta se sienta especial y salga satisfecha.",
+      "image_url": "/team/patty.png"
     },
     {
       "id": 3,
@@ -140,7 +142,8 @@
       "specialty": "Manicura y Pedicura",
       "rating": 4.9,
       "reviews": 205,
-      "bio": "Con su pasión por la belleza y atención personalizada, Valentina crea experiencias únicas para cada clienta."
+      "bio": "Con su pasión por la belleza y atención personalizada, Valentina crea experiencias únicas para cada clienta.",
+      "image_url": "/team/valentina.jpg"
     },
     {
       "id": 4,
@@ -149,7 +152,8 @@
       "specialty": "Tratamientos Corporales",
       "rating": 4.9,
       "reviews": 188,
-      "bio": "Experta en tratamientos corporales y masajes. Su enfoque profesional garantiza resultados visibles."
+      "bio": "Experta en tratamientos corporales y masajes. Su enfoque profesional garantiza resultados visibles.",
+      "image_url": "/team/Diana.jpg"
     },
     {
       "id": 5,
@@ -158,16 +162,18 @@
       "specialty": "Pedicura Spa",
       "rating": 4.9,
       "reviews": 47,
-      "bio": "Ximena es una gran profesional especializada en pedicuras y tratamientos de pies con técnica excepcional."
+      "bio": "Ximena es una gran profesional especializada en pedicuras y tratamientos de pies con técnica excepcional.",
+      "image_url": "/team/ximena.jpg"
     },
     {
       "id": 6,
-      "name": "Marcela",
+      "name": "Lina",
       "role": "Especialista en Cejas",
       "specialty": "Depilación con Hilo",
       "rating": 5.0,
       "reviews": 11,
-      "bio": "Maestra en la técnica de depilación con hilo, crea diseños de cejas perfectos y personalizados."
+      "bio": "Maestra en la técnica de depilación con hilo, crea diseños de cejas perfectos y personalizados.",
+      "image_url": "/team/lina.jpg"
     }
   ],
   "testimonials": [
@@ -223,7 +229,14 @@
     "nearestTransport": "A 3 minutos a pie de la estación de metro de Areeta",
     "ambiance": "Moderno y elegante",
     "specialty": "Uñas",
-    "brands": ["Ainhoa Cosmetics", "Masglo", "OPI", "Kinetics", "Semilac", "Peggy Sage"],
+    "brands": [
+      "Ainhoa Cosmetics",
+      "Masglo",
+      "OPI",
+      "Kinetics",
+      "Semilac",
+      "Peggy Sage"
+    ],
     "schedule": {
       "monday": "10:00 - 20:00",
       "tuesday": "10:00 - 20:00",

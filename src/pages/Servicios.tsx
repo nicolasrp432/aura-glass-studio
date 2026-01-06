@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Clock, ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
+import { Clock, ArrowRight, CheckCircle2, Sparkles, Plus } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { supabase } from "@/lib/supabase";
 import servicesData from "@/data/services.json";
+import DetailModal from "@/components/ui/DetailModal";
 import manicureImg from "@/assets/services-manicure.jpg";
 import pedicureImg from "@/assets/services-pedicure.jpg";
 import nailartImg from "@/assets/services-nailart.jpg";
@@ -29,23 +30,42 @@ const Servicios = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [services, setServices] = useState(servicesData.services);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedService, setSelectedService] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchServices = async () => {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('services')
-        .select('*')
-        .order('id', { ascending: true });
+      try {
+        const { data, error } = await supabase
+          .from('services')
+          .select('*')
+          .order('id', { ascending: true });
 
-      if (!error && data && data.length > 0) {
-        setServices(data);
+        if (!error && data && data.length > 0) {
+          setServices(data);
+        } else {
+          console.warn("Using local fallback data for services due to empty data or error:", error);
+          setServices(servicesData.services);
+        }
+      } catch (err) {
+        console.error("Error fetching services, falling back to local data:", err);
+        setServices(servicesData.services);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     fetchServices();
   }, []);
+
+  const handleOpenDetail = (service: any) => {
+    setSelectedService({
+      ...service,
+      image: service.image_url || getImage(service.category)
+    });
+    setIsModalOpen(true);
+  };
 
   const filteredServices = activeCategory === "all"
     ? services
@@ -119,15 +139,20 @@ const Servicios = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.5, delay: index * 0.05 }}
-                    className="glass-card rounded-[2.5rem] overflow-hidden group flex flex-col h-full"
+                    className="glass-card rounded-[2.5rem] overflow-hidden group flex flex-col h-full cursor-pointer hover:shadow-2xl transition-all duration-500"
+                    onClick={() => handleOpenDetail(service)}
                   >
                     <div className="relative h-64 overflow-hidden">
                       <img
-                        src={getImage(service.category)}
+                        src={service.image_url || getImage(service.category)}
                         alt={service.name}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+                        <div className="bg-white/20 backdrop-blur-md p-4 rounded-full text-white scale-0 group-hover:scale-100 transition-transform duration-500">
+                          <Plus size={32} />
+                        </div>
+                      </div>
                       {service.popular && (
                         <span className="absolute top-6 right-6 bg-accent text-white text-[10px] font-bold px-4 py-2 rounded-full uppercase tracking-widest shadow-lg">
                           Popular
@@ -160,14 +185,9 @@ const Servicios = () => {
                         <span className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-widest">
                           <Clock size={16} className="text-primary" /> {service.duration}
                         </span>
-                        <a
-                          href={TREATWELL_LINK}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 text-primary font-bold text-sm group/link underline-accent"
-                        >
-                          RESERVAR <ArrowRight size={16} className="transition-transform group-hover/link:translate-x-1" />
-                        </a>
+                        <div className="flex items-center gap-2 text-primary font-bold text-sm group/link underline-accent">
+                          VER DETALLES <ArrowRight size={16} className="transition-transform group-hover/link:translate-x-1" />
+                        </div>
                       </div>
                     </div>
                   </motion.article>
@@ -177,6 +197,13 @@ const Servicios = () => {
           )}
         </div>
       </section>
+
+      <DetailModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        item={selectedService}
+        type="service"
+      />
     </Layout>
   );
 };

@@ -13,9 +13,12 @@ import {
   Sparkles,
   MessageCircle,
   User,
-  AtSign
+  AtSign,
+  Instagram,
+  Facebook
 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
+import { supabase } from "@/lib/supabase";
 import { toast } from "@/hooks/use-toast";
 
 const TREATWELL_LINK = "https://www.treatwell.es/establecimiento/mani-pedi-1/";
@@ -33,20 +36,33 @@ const Contacto = () => {
     e.preventDefault();
     setStatus("loading");
 
-    // Simulación de envío de formulario
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const { error } = await supabase
+        .from('messages')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            subject: formData.subject,
+            message: formData.message,
+            created_at: new Date().toISOString()
+          }
+        ]);
+
+      if (error) throw error;
+
       setStatus("success");
       toast({
         title: "¡Mensaje enviado!",
         description: "Nos pondremos en contacto contigo lo antes posible.",
       });
       setFormData({ name: "", email: "", subject: "Reserva", message: "" });
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Error sending message:", error);
       setStatus("error");
       toast({
         title: "Error al enviar",
-        description: "Por favor, inténtalo de nuevo más tarde.",
+        description: error.message || "Por favor, inténtalo de nuevo más tarde.",
         variant: "destructive"
       });
     } finally {
@@ -117,6 +133,38 @@ const Contacto = () => {
                   </motion.div>
                 ))}
               </div>
+
+              {/* Social Media Links */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="glass-card p-10 rounded-[2.5rem] border-white/40"
+              >
+                <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                  <div>
+                    <h3 className="font-display text-2xl font-bold mb-1">Síguenos</h3>
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">En nuestras redes sociales</p>
+                  </div>
+                  <div className="flex gap-4">
+                    {[
+                      { icon: Instagram, href: "https://www.instagram.com/manipedilasarenas/", label: "Instagram" },
+                      { icon: Facebook, href: "https://www.facebook.com/manipedilarenas", label: "Facebook" }
+                    ].map((social) => (
+                      <a
+                        key={social.label}
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-14 h-14 rounded-2xl bg-gold/10 flex items-center justify-center text-gold hover:bg-gold hover:text-white transition-all shadow-sm group"
+                        aria-label={social.label}
+                      >
+                        <social.icon size={24} className="group-hover:scale-110 transition-transform" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
 
               {/* Map Placeholder */}
               <motion.div

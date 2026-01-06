@@ -1,146 +1,162 @@
-import { motion } from "framer-motion";
-import { ArrowRight, Clock } from "lucide-react";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, Clock, Star, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
-import manicureImg from "@/assets/services-manicure.jpg";
-import pedicureImg from "@/assets/services-pedicure.jpg";
-import nailartImg from "@/assets/services-nailart.jpg";
-
-const services = [
-  {
-    id: 1,
-    title: "Manicura Premium",
-    description: "Tratamiento completo con esmaltado duradero y cuidado de cutículas",
-    price: "25€",
-    duration: "45 min",
-    image: manicureImg,
-    popular: true,
-  },
-  {
-    id: 2,
-    title: "Pedicura Spa",
-    description: "Experiencia relajante con baño de pies, exfoliación y masaje",
-    price: "35€",
-    duration: "60 min",
-    image: pedicureImg,
-    popular: false,
-  },
-  {
-    id: 3,
-    title: "Nail Art Exclusivo",
-    description: "Diseños personalizados con las últimas tendencias",
-    price: "40€",
-    duration: "75 min",
-    image: nailartImg,
-    popular: true,
-  },
-];
+import { supabase } from "@/lib/supabase";
+import servicesData from "@/data/services.json";
 
 const ServicesPreview = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [featuredServices, setFeaturedServices] = useState<any[]>(
+    servicesData.services.filter(s => s.popular)
+  );
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchFeaturedServices = async () => {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('services')
+          .select('*')
+          .eq('popular', true)
+          .order('id', { ascending: true });
+
+        if (!error && data && data.length > 0) {
+          setFeaturedServices(data);
+        }
+      } catch (err) {
+        console.error("Error fetching featured services:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFeaturedServices();
+  }, []);
+
+  useEffect(() => {
+    if (featuredServices.length === 0) return;
+    const timer = setInterval(() => {
+      setActiveIndex((current) => (current + 1) % featuredServices.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [featuredServices.length]);
+
   return (
-    <section className="section-padding relative z-10 bg-background/50">
+    <section className="section-padding relative z-10 overflow-hidden bg-background">
+      {/* Background Orbs */}
+      <div className="orb orb-turquoise top-[-10%] right-[-10%] w-[30%] h-[30%] opacity-20" />
+      <div className="orb orb-rose bottom-[-10%] left-[-10%] w-[30%] h-[30%] opacity-20" />
+
       <div className="container mx-auto px-6">
-        {/* Header with better spacing and animation */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center max-w-3xl mx-auto mb-20"
-        >
-          <span className="inline-block text-primary font-bold mb-4 tracking-[0.3em] uppercase text-xs">
-            Nuestros Servicios
-          </span>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
-            Tratamientos diseñados <br className="hidden md:block" />
-            <span className="text-gradient">para tu bienestar</span>
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Cada servicio es una experiencia única creada para realzar tu belleza natural
-            utilizando productos de la más alta calidad y técnicas de vanguardia.
-          </p>
-        </motion.div>
+        <div className="flex flex-col lg:flex-row gap-16 items-center">
+          {/* Left Side: Static Content */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="w-full lg:w-2/5"
+          >
+            <span className="flex items-center gap-2 text-primary font-bold mb-6 tracking-[0.3em] uppercase text-xs">
+              <Sparkles size={14} /> Selecciones Exclusivas
+            </span>
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-8 leading-tight">
+              Servicios <br />
+              <span className="text-primary italic">Mas Destacados</span>
+            </h2>
+            <p className="text-lg text-muted-foreground mb-8 leading-relaxed max-w-md">
+              Descubre nuestros tratamientos favoritos, amados por nuestras clientas y
+              actualizados constantemente para ofrecerte lo mejor de la temporada.
+            </p>
 
-        {/* Services Grid with refined cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 mb-16">
-          {services.map((service, index) => (
-            <motion.article
-              key={service.id}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="glass-card rounded-[2rem] overflow-hidden group border border-white/20 shadow-xl"
+            <Link
+              to="/servicios"
+              className="btn-primary group inline-flex items-center gap-3"
             >
-              <div className="relative h-64 overflow-hidden">
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                {service.popular && (
-                  <div className="absolute top-5 left-5 bg-accent text-white text-[10px] font-bold px-4 py-1.5 rounded-full shadow-lg backdrop-blur-md uppercase tracking-wider">
-                    Más Vendido
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              </div>
+              Explorar todo el menú
+              <ArrowRight size={20} className="transition-transform group-hover:translate-x-1.5" />
+            </Link>
 
-              <div className="p-8">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="font-display text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
-                      {service.title}
-                    </h3>
-                    <div className="flex items-center gap-2 text-primary font-semibold">
-                      <span className="text-xl">{service.price}</span>
-                      <span className="text-muted-foreground text-xs font-normal">/ sesión</span>
+            {/* Pagination Indicators for Mobile/Desktop */}
+            <div className="flex gap-3 mt-12">
+              {featuredServices.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveIndex(idx)}
+                  className={`h-2 rounded-full transition-all duration-500 ${activeIndex === idx ? "w-12 bg-primary" : "w-2 bg-primary/20 hover:bg-primary/40"
+                    }`}
+                  aria-label={`Ir al servicio ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Right Side: Dynamic Spotlight Slider */}
+          <div className="w-full lg:w-3/5 perspective-1000">
+            <div className="relative h-[500px] md:h-[600px] w-full">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={featuredServices[activeIndex].id}
+                  initial={{ opacity: 0, scale: 0.9, rotateY: -10, x: 50 }}
+                  animate={{ opacity: 1, scale: 1, rotateY: 0, x: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, rotateY: 10, x: -50 }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  className="absolute inset-0"
+                >
+                  <div className="glass-card rounded-[3rem] overflow-hidden h-full flex flex-col md:flex-row group border-white/30 shadow-2xl">
+                    {/* Image Area */}
+                    <div className="w-full md:w-1/2 relative h-1/2 md:h-full overflow-hidden">
+                      <img
+                        src={featuredServices[activeIndex].image_url}
+                        alt={featuredServices[activeIndex].name}
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                      />
+                      <div className="absolute top-6 left-6 bg-accent/90 backdrop-blur-md text-white text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest shadow-lg">
+                        Destacado
+                      </div>
+                    </div>
+
+                    {/* Content Area */}
+                    <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center items-center md:items-start text-center md:text-left bg-white/5">
+                      <div className="flex items-center gap-1 mb-4">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <Star key={s} size={14} className="fill-primary text-primary" />
+                        ))}
+                      </div>
+                      <h3 className="font-display text-2xl md:text-3xl font-bold mb-4 group-hover:text-primary transition-colors">
+                        {featuredServices[activeIndex].name}
+                      </h3>
+                      <p className="text-muted-foreground text-sm md:text-base leading-relaxed mb-8 flex-grow">
+                        {featuredServices[activeIndex].short_description}
+                      </p>
+
+                      <div className="flex items-center justify-between pt-6 border-t border-white/10">
+                        <div className="flex flex-col">
+                          <span className="text-xs uppercase tracking-widest text-muted-foreground mb-1">Inversión</span>
+                          <span className="text-3xl font-black text-primary">{featuredServices[activeIndex].price}€</span>
+                        </div>
+                        <div className="flex flex-col items-end">
+                          <span className="text-xs uppercase tracking-widest text-muted-foreground mb-1">Duración</span>
+                          <span className="flex items-center gap-2 font-bold text-foreground">
+                            <Clock size={16} className="text-primary" /> {featuredServices[activeIndex].duration}
+                          </span>
+                        </div>
+                      </div>
+
+                      <Link
+                        to="/servicios"
+                        className="mt-8 text-primary font-bold text-sm uppercase tracking-widest flex items-center gap-2 group/link"
+                      >
+                        Más información <ArrowRight size={18} className="transition-transform group-hover/link:translate-x-1" />
+                      </Link>
                     </div>
                   </div>
-                  <div className="w-10 h-10 rounded-full border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                    <ArrowRight size={18} />
-                  </div>
-                </div>
-
-                <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-                  {service.description}
-                </p>
-
-                <div className="flex items-center justify-between pt-6 border-t border-border/50">
-                  <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                    <Clock size={16} className="text-primary/60" />
-                    <span>{service.duration} aprox.</span>
-                  </div>
-                  <Link
-                    to="/contacto"
-                    className="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1.5 group/link relative"
-                  >
-                    <span>Reservar</span>
-                    <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover/link:w-full" />
-                  </Link>
-                </div>
-              </div>
-            </motion.article>
-          ))}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
         </div>
-
-        {/* View All CTA */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-center"
-        >
-          <Link
-            to="/servicios"
-            className="inline-flex items-center gap-2 text-foreground font-medium hover:text-primary transition-colors group"
-          >
-            Ver todos los servicios
-            <ArrowRight
-              size={18}
-              className="transition-transform group-hover:translate-x-1"
-            />
-          </Link>
-        </motion.div>
       </div>
     </section>
   );

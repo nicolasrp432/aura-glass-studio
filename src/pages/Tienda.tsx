@@ -1,58 +1,65 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Sparkles, Star, Package } from "lucide-react";
+import { ShoppingBag, Sparkles, Star, Package, Plus, ArrowRight } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { useCart } from "@/stores/cartStore";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
+import DetailModal from "@/components/ui/DetailModal";
 
 const initialProducts = [
   {
     id: "p1",
     name: "Esmalte Gel Premium",
-    description: "Colección exclusiva de colores vibrantes y duraderos con acabado espejo profesional",
+    description: "Colección exclusiva de colores vibrantes y duraderos con acabado espejo profesional. Nuestra fórmula avanzada garantiza un brillo extremo por hasta 3 semanas, protegiendo la salud natural de la uña.",
+    short_description: "Colección exclusiva de colores vibrantes y duraderos.",
     price: 14.99,
-    image: "https://images.unsplash.com/photo-1585128792020-803d29415281?w=400&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1632345031435-07271dc69e5d?w=800&q=80",
     category: "Esmaltes"
   },
   {
     id: "p2",
     name: "Aceite de Cutículas",
-    description: "Fórmula nutritiva con vitamina E y aceite de almendras dulces para una hidratación profunda",
+    description: "Fórmula nutritiva con vitamina E y aceite de almendras dulces para una hidratación profunda. Penetra rápidamente sin dejar sensación grasa, suavizando las cutículas y fortaleciendo la matriz de la uña.",
+    short_description: "Fórmula nutritiva con vitamina E para hidratación profunda.",
     price: 12.50,
-    image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1607006344380-b6775a0824a7?w=800&q=80",
     category: "Cuidado"
   },
   {
     id: "p3",
     name: "Crema de Manos Luxury",
-    description: "Hidratación intensa con manteca de karité orgánica y esencia de jazmín",
+    description: "Hidratación intensa con manteca de karité orgánica y esencia de jazmín. Crea una barrera protectora contra agentes externos, dejando la piel suave, firme y delicadamente perfumada.",
+    short_description: "Hidratación intensa con manteca de karité orgánica.",
     price: 18.99,
-    image: "https://images.unsplash.com/photo-1571875257727-256c39da42af?w=400&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1612817288484-6f916006741a?w=800&q=80",
     category: "Cuidado"
   },
   {
     id: "p4",
     name: "Kit Manicura Casa",
-    description: "Todo lo necesario para mantener tus uñas perfectas entre visitas al salón",
+    description: "Todo lo necesario para mantener tus uñas perfectas entre visitas al salón: lima profesional, empuja cutículas, base fortalecedora, color premium y top coat de secado rápido.",
+    short_description: "Todo lo necesario para mantener tus uñas perfectas.",
     price: 45.00,
-    image: "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=800&q=80",
     category: "Kits"
   },
   {
     id: "p5",
     name: "Base Fortalecedora",
-    description: "Tratamiento intensivo que restaura y fortalece las uñas débiles o quebradizas",
+    description: "Tratamiento intensivo enriquecido con calcio y proteínas que restaura y fortalece las uñas débiles o quebradizas desde la primera aplicación. Ideal para usar sola o como base.",
+    short_description: "Tratamiento intensivo que restaura y fortalece las uñas.",
     price: 16.50,
-    image: "https://images.unsplash.com/photo-1600612253971-422e7f5c5904?w=400&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800&q=80",
     category: "Esmaltes"
   },
   {
     id: "p6",
     name: "Top Coat Brillante",
-    description: "Capa protectora ultra brillante que prolonga la duración de tu manicura",
+    description: "Capa protectora ultra brillante de alta velocidad que prolonga la duración de tu manicura, evita descascarillados y protege el color de los rayos UV.",
+    short_description: "Capa protectora ultra brillante de secado rápido.",
     price: 11.99,
-    image: "https://images.unsplash.com/photo-1631214540553-5f97c91a8e61?w=400&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1627052968390-c2d96677987b?w=800&q=80",
     category: "Esmaltes"
   },
 ];
@@ -61,25 +68,41 @@ const Tienda = () => {
   const { addItem, setCartOpen } = useCart();
   const [products, setProducts] = useState(initialProducts);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('id', { ascending: true });
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .order('id', { ascending: true });
 
-      if (!error && data && data.length > 0) {
-        setProducts(data);
+        if (!error && data && data.length > 0) {
+          setProducts(data);
+        } else {
+          console.warn("Using local fallback data for products due to empty data or error:", error);
+          setProducts(initialProducts);
+        }
+      } catch (err) {
+        console.error("Error fetching products, falling back to initial data:", err);
+        setProducts(initialProducts);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     fetchProducts();
   }, []);
 
-  const handleAddToCart = (product: typeof products[0]) => {
+  const handleOpenDetail = (product: any) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const handleAddToCart = (product: any) => {
     addItem({
       id: product.id,
       name: product.name,
@@ -91,6 +114,7 @@ const Tienda = () => {
       description: `${product.name} ya está en tu carrito.`,
     });
     setCartOpen(true);
+    setIsModalOpen(false);
   };
 
   return (
@@ -135,7 +159,8 @@ const Tienda = () => {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: index * 0.1 }}
-                    className="glass-card rounded-[2.5rem] overflow-hidden group flex flex-col h-full"
+                    className="glass-card rounded-[2.5rem] overflow-hidden group flex flex-col h-full cursor-pointer"
+                    onClick={() => handleOpenDetail(product)}
                   >
                     <div className="relative h-72 overflow-hidden bg-muted">
                       <img
@@ -144,7 +169,11 @@ const Tienda = () => {
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         loading="lazy"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+                        <div className="bg-white/20 backdrop-blur-md p-4 rounded-full text-white scale-0 group-hover:scale-100 transition-transform duration-500">
+                          <Plus size={32} />
+                        </div>
+                      </div>
 
                       <div className="absolute top-6 left-6 flex flex-col gap-2">
                         {index === 0 && (
@@ -173,13 +202,16 @@ const Tienda = () => {
                             {product.price.toFixed(2)}€
                           </span>
                         </div>
-                        <button
-                          onClick={() => handleAddToCart(product)}
+                        <div
                           className="flex items-center gap-3 bg-gold text-white px-8 py-4 rounded-2xl text-sm font-bold hover:shadow-xl hover:shadow-gold/30 hover:-translate-y-1 transition-all active:scale-95"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddToCart(product);
+                          }}
                         >
                           <ShoppingBag size={18} />
                           COMPRAR
-                        </button>
+                        </div>
                       </div>
                     </div>
                   </motion.article>
@@ -189,6 +221,14 @@ const Tienda = () => {
           )}
         </div>
       </section>
+
+      <DetailModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        item={selectedProduct}
+        type="product"
+        onAction={() => handleAddToCart(selectedProduct)}
+      />
     </Layout>
   );
 };

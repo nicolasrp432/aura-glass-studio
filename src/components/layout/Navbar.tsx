@@ -9,8 +9,8 @@ const TREATWELL_LINK = "https://www.treatwell.es/establecimiento/mani-pedi-1/";
 const navLinks = [
   { name: "Inicio", href: "/" },
   { name: "Servicios", href: "/servicios" },
-  { name: "Galería", href: "/galeria" },
   { name: "Tienda", href: "/tienda" },
+  { name: "Galería", href: "/galeria" },
   { name: "Equipo", href: "/equipo" },
   { name: "Contacto", href: "/contacto" },
 ];
@@ -39,12 +39,15 @@ const Navbar = () => {
       <motion.header
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
-          ? "py-3 bg-white/70 backdrop-blur-xl border-b border-white/40 shadow-glass"
-          : "py-6 bg-transparent"
+        className={`fixed left-0 right-0 z-50 transition-all duration-500 flex justify-center ${isScrolled ? "top-4 px-4" : "top-0 px-0"
           }`}
       >
-        <div className="container mx-auto px-6">
+        <div
+          className={`w-full transition-all duration-500 overflow-hidden ${isScrolled
+            ? "max-w-6xl bg-white/80 backdrop-blur-xl rounded-2xl border border-white/40 shadow-glass py-2 px-6"
+            : "bg-transparent py-6 px-6"
+            }`}
+        >
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link
@@ -52,7 +55,7 @@ const Navbar = () => {
               className="flex items-center gap-3 group transition-transform duration-500 active:scale-95"
               aria-label="Ir al inicio"
             >
-              <div className="relative h-12 w-auto overflow-hidden">
+              <div className={`relative transition-all duration-500 overflow-hidden ${isScrolled ? "h-12" : "h-20"}`}>
                 <img
                   src="/logo.png"
                   alt="Mani Pedi Logo"
@@ -62,19 +65,21 @@ const Navbar = () => {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-10">
+            <nav className="hidden lg:flex items-center gap-8">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.href}
-                  className={`text-sm font-semibold tracking-wide transition-all duration-300 relative py-2 px-1 group ${location.pathname === link.href
+                  className={`text-sm font-semibold tracking-wide transition-all duration-300 relative py-2 px-2 group ${location.pathname === link.href
                     ? "text-primary"
-                    : "text-foreground/80 hover:text-primary"
+                    : "text-foreground/70 hover:text-primary"
                     }`}
                 >
                   {link.name}
-                  <span className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-primary to-accent transition-all duration-300 ${location.pathname === link.href ? "w-full" : "w-0 group-hover:w-full"
-                    }`} />
+                  <span
+                    className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-1 bg-primary rounded-full transition-all duration-300 ${location.pathname === link.href ? "w-1" : "w-0 group-hover:w-1"
+                      }`}
+                  />
                 </Link>
               ))}
             </nav>
@@ -83,15 +88,16 @@ const Navbar = () => {
             <div className="flex items-center gap-3">
               <Link
                 to="/tienda"
-                className="relative p-3 hover:bg-white/40 rounded-full transition-all duration-300 active:scale-90"
+                className={`relative p-2.5 rounded-full transition-all duration-300 active:scale-90 ${isScrolled ? "hover:bg-primary/5" : "hover:bg-white/20"
+                  }`}
                 aria-label="Ver carrito"
               >
-                <ShoppingBag size={22} className="text-foreground" />
+                <ShoppingBag size={20} className="text-foreground" />
                 {cartCount > 0 && (
                   <motion.span
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute top-1 right-1 w-5 h-5 bg-accent text-white text-[10px] rounded-full flex items-center justify-center font-bold shadow-lg shadow-accent/20"
+                    className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-white text-[10px] rounded-full flex items-center justify-center font-bold shadow-lg shadow-accent/20"
                   >
                     {cartCount}
                   </motion.span>
@@ -102,17 +108,19 @@ const Navbar = () => {
                 href={TREATWELL_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden md:flex btn-primary text-xs py-3.5 px-8 shadow-sm"
+                className={`hidden md:flex btn-primary shadow-sm transition-all duration-300 ${isScrolled ? "text-[11px] py-2.5 px-6" : "text-xs py-3.5 px-8"
+                  }`}
               >
-                RESERVAR CITA
+                RESERVAR
               </a>
 
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
-                className="lg:hidden p-3 hover:bg-white/40 rounded-full transition-all active:scale-90"
+                className={`lg:hidden p-2.5 rounded-full transition-all active:scale-90 ${isScrolled ? "hover:bg-primary/5" : "hover:bg-white/20"
+                  }`}
                 aria-label="Abrir menú"
               >
-                <Menu size={24} />
+                <Menu size={22} />
               </button>
             </div>
           </div>
@@ -128,79 +136,80 @@ const Navbar = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/30 backdrop-blur-md z-[60]"
+              className="fixed inset-0 bg-black/40 backdrop-blur-md z-[60]"
             />
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed top-0 right-0 bottom-0 w-[85%] max-w-sm bg-white/95 backdrop-blur-2xl z-[70] p-8 flex flex-col"
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed top-0 right-0 bottom-0 w-full max-w-sm bg-white z-[70] shadow-2xl flex flex-col"
             >
-              <div className="flex justify-between items-center mb-12">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-display font-bold">M</div>
-                  <span className="font-display text-xl font-bold">Menú</span>
-                </div>
+              <div className="p-6 flex justify-between items-center border-b border-gray-100">
+                <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>
+                  <img src="/logo.png" alt="Logo" className="h-10 w-auto" />
+                </Link>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-3 bg-muted/30 hover:bg-muted rounded-full transition-all active:scale-90"
+                  className="p-3 bg-gray-50 hover:bg-gray-100 rounded-full transition-all active:scale-90"
                 >
-                  <X size={24} />
+                  <X size={20} />
                 </button>
               </div>
 
-              <nav className="flex flex-col gap-2">
-                {navLinks.map((link, index) => (
-                  <motion.div
-                    key={link.name}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                  >
-                    <Link
-                      to={link.href}
-                      className={`block py-4 px-6 rounded-2xl font-semibold text-lg transition-all ${location.pathname === link.href
-                        ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                        : "hover:bg-primary/5 text-foreground"
-                        }`}
+              <div className="flex-1 overflow-y-auto py-8 px-6">
+                <nav className="flex flex-col gap-1">
+                  {navLinks.map((link, index) => (
+                    <motion.div
+                      key={link.name}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
                     >
-                      {link.name}
-                    </Link>
-                  </motion.div>
-                ))}
-              </nav>
+                      <Link
+                        to={link.href}
+                        className={`group flex items-center justify-between py-4 px-4 rounded-xl transition-all ${location.pathname === link.href
+                          ? "bg-primary/5 text-primary"
+                          : "hover:bg-primary/5 text-foreground/80"
+                          }`}
+                      >
+                        <span className="text-xl font-medium">{link.name}</span>
+                        <div className={`w-1.5 h-1.5 rounded-full bg-primary transition-all duration-300 ${location.pathname === link.href ? "opacity-100 scale-100" : "opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100"
+                          }`} />
+                      </Link>
+                    </motion.div>
+                  ))}
+                </nav>
+              </div>
 
-              <div className="mt-auto space-y-6">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
+              <div className="p-6 border-t border-gray-100 bg-gray-50/50">
+                <div className="space-y-4">
                   <a
                     href={TREATWELL_LINK}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center w-full btn-primary py-5 text-sm"
+                    className="flex items-center justify-center w-full btn-primary py-4 text-sm font-bold tracking-widest"
                   >
                     RESERVAR CITA
                   </a>
-                </motion.div>
 
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.4 }}
-                  className="pt-8 border-t border-border flex flex-col gap-4"
-                >
-                  <a
-                    href="tel:+34944123456"
-                    className="flex items-center gap-4 text-muted-foreground hover:text-primary transition-colors font-medium"
-                  >
-                    <div className="w-10 h-10 rounded-full bg-muted/50 flex items-center justify-center"><Phone size={18} /></div>
-                    <span>+34 944 123 456</span>
-                  </a>
-                </motion.div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <a
+                      href="tel:+34944123456"
+                      className="flex items-center justify-center gap-2 py-3 bg-white border border-gray-200 rounded-xl text-xs font-medium text-foreground/70 hover:border-primary/30 hover:text-primary transition-all"
+                    >
+                      <Phone size={14} />
+                      <span>Llamar</span>
+                    </a>
+                    <Link
+                      to="/contacto"
+                      className="flex items-center justify-center gap-2 py-3 bg-white border border-gray-200 rounded-xl text-xs font-medium text-foreground/70 hover:border-primary/30 hover:text-primary transition-all"
+                    >
+                      <MapPin size={14} />
+                      <span>Ubicación</span>
+                    </Link>
+                  </div>
+                </div>
               </div>
             </motion.div>
           </>
