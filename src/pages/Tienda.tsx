@@ -80,14 +80,18 @@ const Tienda = () => {
           .select('*')
           .order('id', { ascending: true });
 
-        if (!error && data && data.length > 0) {
+        if (error) {
+          console.error("Supabase fetch error:", error);
+          setProducts(initialProducts);
+        } else if (data && data.length > 0) {
+          console.log("Products fetched successfully from Supabase:", data.length);
           setProducts(data);
         } else {
-          console.warn("Using local fallback data for products due to empty data or error:", error);
+          console.warn("No products found in Supabase products table.");
           setProducts(initialProducts);
         }
       } catch (err) {
-        console.error("Error fetching products, falling back to initial data:", err);
+        console.error("Unexpected error fetching products:", err);
         setProducts(initialProducts);
       } finally {
         setIsLoading(false);
@@ -108,6 +112,7 @@ const Tienda = () => {
       name: product.name,
       price: product.price,
       image: product.image,
+      stripe_price_id: product.stripe_price_id,
     });
     toast({
       title: "¡Añadido con éxito!",

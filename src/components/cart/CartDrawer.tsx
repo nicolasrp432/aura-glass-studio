@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Minus, ShoppingBag, Trash2, ArrowRight, User, Mail, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { useCart } from "@/stores/cartStore";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabase";
 
 const CartDrawer = () => {
   const { items, isOpen, setCartOpen, updateQuantity, removeItem, total, clearCart } = useCart();
@@ -37,23 +38,46 @@ const CartDrawer = () => {
       return;
     }
 
+    if (items.length === 0) return;
+
     setIsProcessing(true);
 
-    // Simulate payment processing
-    setTimeout(() => {
-      setIsProcessing(false);
-      setStep('success');
-      toast({
-        title: "¡Pago completado!",
-        description: "Tu pedido ha sido procesado con éxito.",
+    try {
+      // Validate that all items have price IDs
+      const missingPriceId = items.find(item => !item.stripe_price_id);
+      if (missingPriceId) {
+        throw new Error(`El producto "${missingPriceId.name}" no está configurado para pagos. Por favor, elimínalo o inténtalo más tarde.`);
+      }
+
+      // Create Checkout Session via Supabase Edge Function
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: {
+          items: items.map(item => ({
+            stripe_price_id: item.stripe_price_id,
+            quantity: item.quantity
+          })),
+          customer_email: customerInfo.email,
+          customer_name: customerInfo.name
+        }
       });
-      setTimeout(() => {
-        clearCart();
-        setCartOpen(false);
-        setStep('cart');
-        setCustomerInfo({ name: "", email: "" });
-      }, 3000);
-    }, 2500);
+
+      if (error) throw error;
+
+      if (data?.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url;
+      } else {
+        throw new Error("No se pudo generar la sesión de pago.");
+      }
+    } catch (err: any) {
+      console.error("Checkout error:", err);
+      toast({
+        variant: "destructive",
+        title: "Error en el pago",
+        description: err.message || "Hubo un problema al conectar con la pasarela de pagos.",
+      });
+      setIsProcessing(false);
+    }
   };
 
   const currentTotal = total();

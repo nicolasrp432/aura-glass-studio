@@ -21,15 +21,22 @@ const Galeria = () => {
     useEffect(() => {
         const fetchGallery = async () => {
             setIsLoading(true);
-            const { data, error } = await supabase
-                .from('gallery')
-                .select('*')
-                .order('id', { ascending: false });
+            try {
+                const { data, error } = await supabase
+                    .from('gallery')
+                    .select('*')
+                    .order('id', { ascending: false });
 
-            if (!error && data && data.length > 0) {
-                setItems(data);
+                if (!error && data && data.length > 0) {
+                    setItems(data);
+                } else {
+                    console.warn("Using local fallback data for gallery due to empty data or error:", error);
+                }
+            } catch (err) {
+                console.error("Error fetching gallery:", err);
+            } finally {
+                setIsLoading(false);
             }
-            setIsLoading(false);
         };
 
         fetchGallery();

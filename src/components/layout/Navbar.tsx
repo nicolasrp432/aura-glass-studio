@@ -19,7 +19,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const cartItems = useCart((state) => state.items);
+  const { items: cartItems, setCartOpen } = useCart();
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   useEffect(() => {
@@ -86,8 +86,8 @@ const Navbar = () => {
 
             {/* Actions */}
             <div className="flex items-center gap-3">
-              <Link
-                to="/tienda"
+              <button
+                onClick={() => setCartOpen(true)}
                 className={`relative p-2.5 rounded-full transition-all duration-300 active:scale-90 ${isScrolled ? "hover:bg-primary/5" : "hover:bg-white/20"
                   }`}
                 aria-label="Ver carrito"
@@ -102,7 +102,7 @@ const Navbar = () => {
                     {cartCount}
                   </motion.span>
                 )}
-              </Link>
+              </button>
 
               <a
                 href={TREATWELL_LINK}
