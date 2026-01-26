@@ -57,6 +57,19 @@ const Servicios = () => {
     };
 
     fetchServices();
+
+    // Realtime subscription
+    const channel = supabase
+      .channel('public:services')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'services' }, (payload) => {
+        console.log('Change received!', payload);
+        fetchServices();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const handleOpenDetail = (service: any) => {

@@ -37,6 +37,19 @@ const Equipo = () => {
     };
 
     fetchTeam();
+
+    // Realtime subscription
+    const channel = supabase
+      .channel('public:team')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'team' }, (payload) => {
+        console.log('Change received!', payload);
+        fetchTeam();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   return (

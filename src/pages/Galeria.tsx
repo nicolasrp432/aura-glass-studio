@@ -40,6 +40,19 @@ const Galeria = () => {
         };
 
         fetchGallery();
+
+        // Realtime subscription
+        const channel = supabase
+            .channel('public:gallery')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'gallery' }, (payload) => {
+                console.log('Change received!', payload);
+                fetchGallery();
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }, []);
 
     return (

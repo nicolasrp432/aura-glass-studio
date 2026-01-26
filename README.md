@@ -1,73 +1,94 @@
-# Welcome to your Lovable project
+# ✨ Mani Pedi Getxo - Web Oficial
 
-## Project info
+Documentación profesional del sistema de gestión y portal web para el salón de belleza **Mani Pedi Getxo**.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+---
 
-## How can I edit this code?
+## 📖 Descripción del Proyecto
 
-There are several ways of editing your application.
+**Mani Pedi Getxo** es una plataforma web integral diseñada para un centro de estética de alta gama especializado en el cuidado de manos y pies, así como en tratamientos de belleza avanzados. El proyecto no solo sirve como una vitrina digital elegante y moderna para atraer nuevos clientes, sino que también funciona como una herramienta de gestión interna y ventas.
 
-**Use Lovable**
+### Propósito y Objetivos
+- **Presencia Digital Premium:** Ofrecer una experiencia de usuario fluida y visualmente atractiva que refleje la calidad y el lujo de los servicios presenciales.
+- **Gestión Centralizada:** Permitir a los administradores gestionar el catálogo de servicios, visualizar métricas y administrar la tienda desde un solo lugar.
+- **Venta de Productos:** Facilitar la compra de productos de belleza especializados a través de una tienda integrada con pagos seguros.
+- **Conexión Directa:** Optimizar la comunicación con el cliente mediante integraciones de WhatsApp y formularios de contacto.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🚀 Qué puedes hacer
 
-**Use your preferred IDE**
+Como usuario o administrador de la plataforma, dispones de las siguientes capacidades:
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- **Explorar el Menú de Servicios:** Navegar por un catálogo detallado de tratamientos que incluye manicura, pedicura, lifting de pestañas, limpieza facial y maderoterapia.
+- **Tienda Online Integrada:** Comprar productos de belleza de alta gama con un sistema de carrito de compras y pasarela de pago segura (Stripe).
+- **Galería de Trabajos:** Visualizar una galería fotográfica de alta resolución con los resultados de los tratamientos realizados.
+- **Conocer al Equipo:** Consultar los perfiles de las profesionales encargadas de los servicios.
+- **Contacto Rápido:** Acceso directo a reservas y consultas vía WhatsApp mediante un widget flotante.
+- **Panel de Administración (Dashboard):** 
+    - Visualizar estadísticas de rendimiento.
+    - Gestionar el inventario de servicios y productos.
+    - Administrar las reservas y configuraciones del sitio.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## 🔐 Acceso Administrativo
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+El acceso al panel de control está restringido exclusivamente al personal autorizado.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+*   **URL de Acceso:** `/admin`
+*   **Correo Electrónico de Administración:** `admin@manipedigexto.com`
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Instrucciones de Acceso
+1. Dirígete a la ruta [tu-dominio.com/admin](https://manipedigetxo.com/admin).
+2. Introduce el correo electrónico mencionado arriba y la contraseña correspondiente.
+3. Tras la validación, serás redirigido automáticamente al Dashboard de administración.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+> [!WARNING]
+> **Nota de Seguridad:** Las credenciales de administrador son confidenciales. Por favor, asegúrate de cerrar sesión al finalizar tu trabajo y nunca compartas tus datos de acceso con terceros no autorizados.
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🛠️ Tecnologías Utilizadas
 
-**Use GitHub Codespaces**
+Este proyecto utiliza un stack tecnológico moderno enfocado en el rendimiento y la escalabilidad:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- **Frontend:** [React](https://reactjs.org/) + [Vite](https://vitejs.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- **Estilos:** [Tailwind CSS](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/)
+- **Animaciones:** [Framer Motion](https://www.framer.com/motion/)
+- **Backend & Auth:** [Supabase](https://supabase.com/)
+- **Gestión de Estado:** [Zustand](https://docs.pmnd.rs/zustand/) & [React Query](https://tanstack.com/query/latest)
+- **Pagos:** [Stripe API](https://stripe.com/)
+- **Iconos:** [Lucide React](https://lucide.dev/)
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+## 💻 Configuración para Desarrolladores
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Requisitos Previos
+- Node.js (v18 o superior)
+- npm o bun
 
-## How can I deploy this project?
+### Instalación
+1. Clonar el repositorio.
+2. Instalar dependencias:
+   ```bash
+   npm install
+   ```
+3. Configurar las variables de entorno en un archivo `.env` (basarse en `.env.example`).
+4. Iniciar el servidor de desarrollo:
+   ```bash
+   npm run dev
+   ```
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+## 🚢 Despliegue
 
-Yes, you can!
+El proyecto está preparado para ser desplegado en plataformas como Vercel o Netlify. Asegúrate de configurar correctamente las variables de entorno de Supabase y Stripe en el panel de control de tu proveedor de hosting.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+---
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 📄 Licencia
+
+Este proyecto es de propiedad privada para **Mani Pedi Getxo**. Todos los derechos reservados.

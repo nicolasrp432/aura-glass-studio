@@ -2,15 +2,23 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Sparkles, Clock, Award } from "lucide-react";
 import { Link } from "react-router-dom";
-import heroImage from "@/assets/hero-manicure.jpg";
 
 const heroVideos = [
   "/hersection.mp4",
   // El usuario añadirá más videos aquí
 ];
 
+const heroPhrases = [
+  "el mejor cuidado",
+  "una experiencia única",
+  "un toque de elegancia",
+  "belleza profesional",
+  "resultados perfectos"
+];
+
 const HeroSection = () => {
   const [currentVideo, setCurrentVideo] = useState(0);
+  const [currentPhrase, setCurrentPhrase] = useState(0);
 
   useEffect(() => {
     if (heroVideos.length <= 1) return;
@@ -20,7 +28,15 @@ const HeroSection = () => {
     }, 8000); // Cambio cada 8 segundos
 
     return () => clearInterval(timer);
-  }, []);
+  }, [heroVideos.length]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentPhrase((prev) => (prev + 1) % heroPhrases.length);
+    }, 4000); // Cambio cada 4 segundos
+
+    return () => clearInterval(timer);
+  }, [heroPhrases.length]);
 
   return (
     <section className="relative min-h-[100svh] flex items-center pt-24 pb-12 lg:pt-32 lg:pb-20 overflow-hidden">
@@ -66,15 +82,32 @@ const HeroSection = () => {
           </motion.div>
 
           {/* Headline with advanced typography */}
-          <div className="overflow-hidden mb-8">
+          <div className="mb-8">
             <motion.h1
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              transition={{ duration: 1.2, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="font-display text-5xl sm:text-7xl lg:text-9xl font-bold text-foreground leading-[1] tracking-tight"
+              initial={{ y: 30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="font-display text-5xl sm:text-7xl lg:text-9xl font-bold text-foreground leading-[1.1] tracking-tight"
             >
               Tus manos merecen <br className="hidden sm:block" />
-              <span className="text-gradient italic">el mejor cuidado</span>
+              <div className="relative h-[1.2em] sm:h-[1.1em] overflow-hidden mt-2">
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={currentPhrase}
+                    initial={{ y: 40, opacity: 0, filter: "blur(10px)" }}
+                    animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+                    exit={{ y: -40, opacity: 0, filter: "blur(10px)" }}
+                    transition={{ 
+                      duration: 0.8, 
+                      ease: [0.16, 1, 0.3, 1],
+                      opacity: { duration: 0.4 }
+                    }}
+                    className="text-gradient italic absolute left-0 right-0 inline-block"
+                  >
+                    {heroPhrases[currentPhrase]}
+                  </motion.span>
+                </AnimatePresence>
+              </div>
             </motion.h1>
           </div>
 
@@ -97,13 +130,27 @@ const HeroSection = () => {
           >
             <Link
               to="/contacto"
-              className="btn-primary flex items-center justify-center gap-3 group px-10 py-5 w-full sm:w-auto"
+              className="btn-primary relative overflow-hidden flex items-center justify-center gap-3 group px-10 py-5 w-full sm:w-auto"
             >
-              RESERVAR CITA
-              <ArrowRight
-                size={20}
-                className="transition-transform group-hover:translate-x-1.5"
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-12"
+                initial={{ x: "-100%" }}
+                animate={{ x: "200%" }}
+                transition={{
+                  repeat: Infinity,
+                  repeatType: "loop",
+                  duration: 2,
+                  repeatDelay: 3,
+                  ease: "easeInOut",
+                }}
               />
+              <span className="relative z-10 flex items-center gap-3">
+                RESERVAR CITA
+                <ArrowRight
+                  size={20}
+                  className="transition-transform group-hover:translate-x-1.5"
+                />
+              </span>
             </Link>
             <Link
               to="/servicios"

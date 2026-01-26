@@ -123,7 +123,7 @@
       "rating": 5.0,
       "reviews": 365,
       "bio": "Especialista en diseños creativos y manicura semipermanente. Con su atención al detalle y técnica impecable, garantiza resultados excepcionales.",
-      "image_url": "/team/stefany.png"
+      "image_url": "/team/stefy.jpeg"
     },
     {
       "id": 2,
@@ -133,7 +133,7 @@
       "rating": 4.9,
       "reviews": 225,
       "bio": "Profesional dedicada que combina técnica y calidez para que cada clienta se sienta especial y salga satisfecha.",
-      "image_url": "/team/patty.png"
+      "image_url": "/team/patty.jpeg"
     },
     {
       "id": 3,
@@ -173,7 +173,7 @@
       "rating": 5.0,
       "reviews": 11,
       "bio": "Maestra en la técnica de depilación con hilo, crea diseños de cejas perfectos y personalizados.",
-      "image_url": "/team/lina.jpg"
+      "image_url": "/team/lina.jpeg"
     }
   ],
   "testimonials": [

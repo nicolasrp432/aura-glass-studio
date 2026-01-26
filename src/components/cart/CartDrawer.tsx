@@ -5,6 +5,83 @@ import { useCart } from "@/stores/cartStore";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 
+const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1610992015732-2449b0c26670?w=800&q=80";
+
+/**
+ * Componente individual para cada item del carrito.
+ * Maneja estados de carga de imagen y errores con un fallback.
+ */
+const CartItemComponent = ({ item, updateQuantity, removeItem }: { 
+  item: any; 
+  updateQuantity: (id: string, q: number) => void; 
+  removeItem: (id: string) => void;
+}) => {
+  const [imgError, setImgError] = useState(false);
+  const [imgLoading, setImgLoading] = useState(true);
+
+  return (
+    <motion.li
+      layout
+      className="group relative flex gap-5 p-5 glass-content rounded-[2rem] border-white/50 hover:bg-white/90 transition-all duration-300 shadow-sm"
+    >
+      <div className="relative w-24 h-24 flex-shrink-0 overflow-hidden rounded-2xl shadow-md bg-muted/20">
+        {/* Marcador de posición mientras la imagen carga */}
+        {imgLoading && (
+          <div className="absolute inset-0 flex items-center justify-center animate-pulse bg-muted/30">
+            <ShoppingBag className="text-muted-foreground/20" size={24} />
+          </div>
+        )}
+        <img 
+          // Intentamos cargar la imagen desde múltiples campos posibles (image o image_url)
+          src={imgError ? FALLBACK_IMAGE : (item.image || item.image_url || FALLBACK_IMAGE)} 
+          alt={item.name} 
+          onLoad={() => setImgLoading(false)}
+          onError={() => {
+            setImgError(true);
+            setImgLoading(false);
+          }}
+          className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${imgLoading ? 'opacity-0' : 'opacity-100'}`} 
+        />
+      </div>
+      <div className="flex-1 min-w-0 flex flex-col justify-center">
+        <div className="flex justify-between items-start mb-1">
+          <h4 className="font-bold text-foreground truncate pr-6">{item.name}</h4>
+          <button 
+            onClick={() => removeItem(item.id)} 
+            className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"
+            aria-label="Eliminar producto"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
+        <p className="text-primary font-black text-lg mb-3">{item.price.toFixed(2)}€</p>
+        
+        {/* Controles de cantidad */}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center bg-muted/40 backdrop-blur-sm rounded-xl p-1 border border-border/50">
+            <button 
+              onClick={() => updateQuantity(item.id, item.quantity - 1)} 
+              className="p-1.5 hover:bg-white/80 rounded-lg transition-all disabled:opacity-30" 
+              disabled={item.quantity <= 1}
+              aria-label="Disminuir cantidad"
+            >
+              <Minus size={12} />
+            </button>
+            <span className="w-10 text-center text-sm font-bold">{item.quantity}</span>
+            <button 
+              onClick={() => updateQuantity(item.id, item.quantity + 1)} 
+              className="p-1.5 hover:bg-white/80 rounded-lg transition-all"
+              aria-label="Aumentar cantidad"
+            >
+              <Plus size={12} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </motion.li>
+  );
+};
+
 const CartDrawer = () => {
   const { items, isOpen, setCartOpen, updateQuantity, removeItem, total, clearCart } = useCart();
   const [step, setStep] = useState<'cart' | 'checkout' | 'success'>('cart');
@@ -28,6 +105,10 @@ const CartDrawer = () => {
     return !newErrors.name && !newErrors.email;
   };
 
+  /**
+   * Procesa el pago redirigiendo a Stripe Checkout.
+   * Valida los datos del cliente y la configuración de precios de los productos.
+   */
   const handleCheckout = async () => {
     if (!validateForm()) {
       toast({
@@ -43,13 +124,13 @@ const CartDrawer = () => {
     setIsProcessing(true);
 
     try {
-      // Validate that all items have price IDs
+      // Validamos que todos los productos tengan un ID de precio de Stripe
       const missingPriceId = items.find(item => !item.stripe_price_id);
       if (missingPriceId) {
         throw new Error(`El producto "${missingPriceId.name}" no está configurado para pagos. Por favor, elimínalo o inténtalo más tarde.`);
       }
 
-      // Create Checkout Session via Supabase Edge Function
+      // Llamada a la Edge Function de Supabase para crear la sesión de Checkout
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: {
           items: items.map(item => ({
@@ -64,7 +145,7 @@ const CartDrawer = () => {
       if (error) throw error;
 
       if (data?.url) {
-        // Redirect to Stripe Checkout
+        // Redirección a la pasarela de Stripe
         window.location.href = data.url;
       } else {
         throw new Error("No se pudo generar la sesión de pago.");
@@ -114,9 +195,21 @@ const CartDrawer = () => {
                     {step === 'checkout' && "Tus Datos"}
                     {step === 'success' && "¡Pedido Confirmado!"}
                   </h3>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
-                    {step === 'success' ? 'Gracias por tu confianza' : `${items.length} ${items.length === 1 ? 'Producto' : 'Productos'}`}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
+                      {step === 'success' ? 'Gracias por tu confianza' : `${items.length} ${items.length === 1 ? 'Producto' : 'Productos'}`}
+                    </p>
+                    {items.length > 0 && step === 'cart' && (
+                      <button 
+                        onClick={() => {
+                          if(confirm("¿Estás seguro de que quieres vaciar el carrito?")) clearCart();
+                        }}
+                        className="text-[10px] text-destructive uppercase tracking-widest font-bold hover:underline"
+                      >
+                        (Vaciar)
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
               <button
@@ -155,29 +248,12 @@ const CartDrawer = () => {
                     ) : (
                       <ul className="space-y-6">
                         {items.map((item) => (
-                          <motion.li
+                          <CartItemComponent
                             key={item.id}
-                            layout
-                            className="group relative flex gap-5 p-5 glass-content rounded-[2rem] border-white/50 hover:bg-white/90 transition-all duration-300 shadow-sm"
-                          >
-                            <div className="relative w-24 h-24 flex-shrink-0 overflow-hidden rounded-2xl shadow-md">
-                              <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                            </div>
-                            <div className="flex-1 min-w-0 flex flex-col justify-center">
-                              <div className="flex justify-between items-start mb-1">
-                                <h4 className="font-bold text-foreground truncate pr-6">{item.name}</h4>
-                                <button onClick={() => removeItem(item.id)} className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"><Trash2 size={16} /></button>
-                              </div>
-                              <p className="text-primary font-black text-lg mb-3">{item.price.toFixed(2)}€</p>
-                              <div className="flex items-center gap-4">
-                                <div className="flex items-center bg-muted/40 backdrop-blur-sm rounded-xl p-1 border border-border/50">
-                                  <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="p-1.5 hover:bg-white/80 rounded-lg transition-all" disabled={item.quantity <= 1}><Minus size={12} className={item.quantity <= 1 ? "opacity-30" : ""} /></button>
-                                  <span className="w-10 text-center text-sm font-bold">{item.quantity}</span>
-                                  <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="p-1.5 hover:bg-white/80 rounded-lg transition-all"><Plus size={12} /></button>
-                                </div>
-                              </div>
-                            </div>
-                          </motion.li>
+                            item={item}
+                            updateQuantity={updateQuantity}
+                            removeItem={removeItem}
+                          />
                         ))}
                       </ul>
                     )}

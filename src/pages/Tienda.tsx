@@ -99,6 +99,19 @@ const Tienda = () => {
     };
 
     fetchProducts();
+
+    // Realtime subscription
+    const channel = supabase
+      .channel('public:products')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, (payload) => {
+        console.log('Change received!', payload);
+        fetchProducts();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const handleOpenDetail = (product: any) => {
@@ -111,7 +124,7 @@ const Tienda = () => {
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.image,
+      image: product.image || product.image_url || "",
       stripe_price_id: product.stripe_price_id,
     });
     toast({
