@@ -4,8 +4,11 @@ import { ArrowRight, Sparkles, Clock, Award } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const heroVideos = [
-  "/hersection.mp4",
-  // El usuario añadirá más videos aquí
+  "public/videos/hersection.mp4",
+  "public/videos/1.mp4",
+  "public/videos/2.mp4",
+  "public/videos/3.mp4",
+  "public/videos/4.mp4",
 ];
 
 const heroPhrases = [
@@ -45,7 +48,7 @@ const HeroSection = () => {
         <AnimatePresence mode="wait">
           <motion.div
             key={heroVideos[currentVideo]}
-            initial={{ opacity: 0, scale: 1.1 }}
+            initial={{ opacity: 10, scale: 1.1 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 2, ease: "easeInOut" }}
@@ -97,8 +100,8 @@ const HeroSection = () => {
                     initial={{ y: 40, opacity: 0, filter: "blur(10px)" }}
                     animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
                     exit={{ y: -40, opacity: 0, filter: "blur(10px)" }}
-                    transition={{ 
-                      duration: 0.8, 
+                    transition={{
+                      duration: 0.8,
                       ease: [0.16, 1, 0.3, 1],
                       opacity: { duration: 0.4 }
                     }}

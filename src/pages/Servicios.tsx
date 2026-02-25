@@ -20,6 +20,32 @@ const categories = [
   { id: "Tratamientos Faciales", name: "Faciales" },
 ];
 
+type ServiceItem = {
+  id: string;
+  name: string;
+  category: string;
+  price?: number;
+  duration?: string;
+  short_description?: string;
+  description?: string;
+  image_url?: string;
+  treatwell_link?: string;
+  popular?: boolean;
+  image?: string;
+};
+
+type ServicePromotion = {
+  id: string | number;
+  title: string;
+  description?: string;
+  discount_percent: number;
+  start_date?: string;
+  end_date?: string;
+  is_active?: boolean;
+  category?: string;
+  service_id?: string;
+};
+
 const getImage = (category: string) => {
   if (category.includes("Pedicura")) return pedicureImg;
   if (category.includes("Pestañas")) return nailartImg;
@@ -28,10 +54,13 @@ const getImage = (category: string) => {
 
 const Servicios = () => {
   const [activeCategory, setActiveCategory] = useState("all");
-  const [services, setServices] = useState(servicesData.services);
+  const [services, setServices] = useState<ServiceItem[]>(servicesData.services as ServiceItem[]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedService, setSelectedService] = useState<any>(null);
+  const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [servicePromotions, setServicePromotions] = useState<ServicePromotion[]>([]);
+  const [isLoadingPromotions, setIsLoadingPromotions] = useState(false);
+  const [promotionsError, setPromotionsError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -43,14 +72,14 @@ const Servicios = () => {
           .order('id', { ascending: true });
 
         if (!error && data && data.length > 0) {
-          setServices(data);
+          setServices(data as ServiceItem[]);
         } else {
           console.warn("Using local fallback data for services due to empty data or error:", error);
-          setServices(servicesData.services);
+          setServices(servicesData.services as ServiceItem[]);
         }
       } catch (err) {
         console.error("Error fetching services, falling back to local data:", err);
-        setServices(servicesData.services);
+        setServices(servicesData.services as ServiceItem[]);
       } finally {
         setIsLoading(false);
       }
@@ -72,7 +101,41 @@ const Servicios = () => {
     };
   }, []);
 
-  const handleOpenDetail = (service: any) => {
+  useEffect(() => {
+    const fetchPromotions = async () => {
+      setIsLoadingPromotions(true);
+      setPromotionsError(null);
+      try {
+        const { data, error } = await supabase
+          .from("service_promotions")
+          .select("*")
+          .eq("is_active", true)
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        const now = new Date();
+        const activePromos = (data || []).filter((promo) => {
+          const startsAt = promo.start_date ? new Date(promo.start_date) : null;
+          const endsAt = promo.end_date ? new Date(promo.end_date) : null;
+          if (startsAt && now < startsAt) return false;
+          if (endsAt && now > endsAt) return false;
+          return true;
+        });
+
+        setServicePromotions(activePromos);
+      } catch (err) {
+        console.error("Error fetching service promotions:", err);
+        setPromotionsError("No se pudieron cargar las promociones activas.");
+      } finally {
+        setIsLoadingPromotions(false);
+      }
+    };
+
+    fetchPromotions();
+  }, []);
+
+  const handleOpenDetail = (service: ServiceItem) => {
     setSelectedService({
       ...service,
       image: service.image_url || getImage(service.category)
@@ -107,6 +170,70 @@ const Servicios = () => {
               OPI, Semilac, Kinetics y Masglo.
             </p>
           </motion.div>
+        </div>
+      </section>
+
+      <section className="pb-16 relative z-10">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
+            <div>
+              <span className="flex items-center gap-2 text-primary font-bold mb-3 tracking-[0.3em] uppercase text-xs">
+                <Sparkles size={14} /> Promociones Activas
+              </span>
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground">
+                Ofertas Exclusivas de Temporada
+              </h2>
+            </div>
+            <p className="text-muted-foreground max-w-md text-sm leading-relaxed">
+              Aprovecha los descuentos disponibles para tus tratamientos favoritos.
+            </p>
+          </div>
+
+          {isLoadingPromotions ? (
+            <div className="flex justify-center items-center h-40">
+              <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+            </div>
+          ) : promotionsError ? (
+            <div className="bg-destructive/5 border border-destructive/10 rounded-2xl p-6 text-destructive font-medium">
+              {promotionsError}
+            </div>
+          ) : servicePromotions.length === 0 ? (
+            <div className="bg-muted/30 border border-border rounded-2xl p-6 text-muted-foreground font-medium">
+              No hay promociones activas en este momento.
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {servicePromotions.map((promo) => (
+                <motion.article
+                  key={promo.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="glass-card rounded-[2rem] p-8 shadow-xl border border-white/40 flex flex-col gap-5"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <h3 className="font-display text-2xl font-bold text-foreground">
+                      {promo.title}
+                    </h3>
+                    <span className="bg-primary text-white text-[10px] font-black px-3 py-2 rounded-full uppercase tracking-widest shadow-lg">
+                      {promo.discount_percent}% OFF
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {promo.description || "Promoción exclusiva disponible por tiempo limitado."}
+                  </p>
+                  <div className="flex flex-col gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    <span>
+                      Vigencia: {promo.start_date ? new Date(promo.start_date).toLocaleDateString() : "Hoy"} - {promo.end_date ? new Date(promo.end_date).toLocaleDateString() : "Hasta nuevo aviso"}
+                    </span>
+                    <span className="text-primary">
+                      Estado: {promo.is_active !== false ? "Activa" : "Inactiva"}
+                    </span>
+                  </div>
+                </motion.article>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

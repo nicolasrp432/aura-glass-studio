@@ -11,6 +11,7 @@ interface DetailModalProps {
         description?: string;
         short_description?: string;
         price: number;
+        discountedPrice?: number;
         image?: string;
         duration?: string;
         category?: string;
@@ -84,7 +85,16 @@ const DetailModal = ({ isOpen, onClose, item, onAction, type }: DetailModalProps
                             <div className="flex items-center gap-6 mb-8 pb-8 border-b border-border/50">
                                 <div className="flex flex-col">
                                     <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold mb-1">Precio</span>
-                                    <span className="text-3xl font-black text-primary">{item.price.toFixed(2)}€</span>
+                                    <div className="flex items-end gap-3">
+                                        <span className="text-3xl font-black text-primary">
+                                            {(item.discountedPrice ?? item.price).toFixed(2)}€
+                                        </span>
+                                        {item.discountedPrice && item.discountedPrice < item.price && (
+                                            <span className="text-xs text-muted-foreground line-through font-bold pb-1">
+                                                {item.price.toFixed(2)}€
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                                 {item.duration && (
                                     <div className="flex flex-col border-l border-border/50 pl-6">

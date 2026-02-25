@@ -1,4 +1,5 @@
 import { Edit2, Trash2, Search, Plus } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface DataTableProps {
   items: any[];
@@ -72,6 +73,9 @@ const DataTable = ({
                   <th className="px-8 py-6 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Info Principal</th>
                   {activeTab === "services" && <th className="px-8 py-6 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Categoría / Precio</th>}
                   {activeTab === "products" && <th className="px-8 py-6 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Stock / Categoría</th>}
+                  {activeTab === "promotions" && <th className="px-8 py-6 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Programación / Estado</th>}
+                  {activeTab === "service_promotions" && <th className="px-8 py-6 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Descuento / Vigencia</th>}
+                  {activeTab === "product_promotions" && <th className="px-8 py-6 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Descuento / Objetivo</th>}
                   {activeTab === "team" && <th className="px-8 py-6 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Especialidad</th>}
                   <th className="px-8 py-6 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">Acciones</th>
                 </tr>
@@ -107,6 +111,47 @@ const DataTable = ({
                         <div className="flex flex-col">
                           <span className="font-bold text-foreground/70">{item.category}</span>
                           <span className="text-accent font-black uppercase text-xs">{item.price}€</span>
+                        </div>
+                      </td>
+                    )}
+                    {activeTab === "promotions" && (
+                      <td className="px-8 py-6 text-sm">
+                        <div className="flex flex-col">
+                          <span className="font-bold text-foreground/70">
+                            {item.start_date ? new Date(item.start_date).toLocaleDateString() : 'Sin inicio'} - 
+                            {item.end_date ? new Date(item.end_date).toLocaleDateString() : 'Sin fin'}
+                          </span>
+                          <span className={cn(
+                            "font-black uppercase text-[10px] px-2 py-0.5 rounded-full w-fit mt-1",
+                            item.is_active !== false ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                          )}>
+                            {item.is_active !== false ? 'Activo' : 'Inactivo'}
+                          </span>
+                        </div>
+                      </td>
+                    )}
+                    {activeTab === "service_promotions" && (
+                      <td className="px-8 py-6 text-sm">
+                        <div className="flex flex-col">
+                          <span className="font-bold text-foreground/70">
+                            {item.discount_percent ? `${item.discount_percent}%` : "0%"} · {item.category || item.service_id || "General"}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {item.start_date ? new Date(item.start_date).toLocaleDateString() : 'Sin inicio'} - 
+                            {item.end_date ? new Date(item.end_date).toLocaleDateString() : 'Sin fin'}
+                          </span>
+                        </div>
+                      </td>
+                    )}
+                    {activeTab === "product_promotions" && (
+                      <td className="px-8 py-6 text-sm">
+                        <div className="flex flex-col">
+                          <span className="font-bold text-foreground/70">
+                            {item.discount_percent ? `${item.discount_percent}%` : "0%"}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {item.product_id || item.category || "Sin objetivo"}
+                          </span>
                         </div>
                       </td>
                     )}

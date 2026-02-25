@@ -182,18 +182,20 @@ const EditModal = ({ isOpen, onClose, item, activeTab, onSave }: EditModalProps)
                   />
                 </div>
                 
-                <div className="space-y-2 col-span-2 md:col-span-1">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">
-                    Precio (€)
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.price || ""}
-                    onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
-                    className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-medium"
-                  />
-                </div>
+                {!["promotions", "service_promotions", "product_promotions"].includes(activeTab) && (
+                  <div className="space-y-2 col-span-2 md:col-span-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">
+                      Precio (€)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={formData.price || ""}
+                      onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
+                      className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-medium"
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Description */}
@@ -276,6 +278,207 @@ const EditModal = ({ isOpen, onClose, item, activeTab, onSave }: EditModalProps)
                       onChange={(e) => setFormData({ ...formData, specialty: e.target.value })}
                       className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-medium"
                     />
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "promotions" && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">Fecha Inicio</label>
+                      <input
+                        type="datetime-local"
+                        value={formData.start_date ? new Date(formData.start_date).toISOString().slice(0, 16) : ""}
+                        onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                        className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-medium"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">Fecha Fin</label>
+                      <input
+                        type="datetime-local"
+                        value={formData.end_date ? new Date(formData.end_date).toISOString().slice(0, 16) : ""}
+                        onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                        className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-medium"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">Enlace (URL)</label>
+                    <input
+                      type="text"
+                      placeholder="/servicios, /tienda, etc."
+                      value={formData.link_url || ""}
+                      onChange={(e) => setFormData({ ...formData, link_url: e.target.value })}
+                      className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-medium"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-2xl border border-border">
+                    <input
+                      type="checkbox"
+                      id="is_active"
+                      checked={formData.is_active !== false}
+                      onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                      className="w-5 h-5 rounded border-border text-primary focus:ring-primary/20"
+                    />
+                    <label htmlFor="is_active" className="text-sm font-bold text-foreground/70 cursor-pointer">
+                      Promoción Activa
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "service_promotions" && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">Descuento (%)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        value={formData.discount_percent || ""}
+                        onChange={(e) => setFormData({ ...formData, discount_percent: parseFloat(e.target.value) })}
+                        className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-medium"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">Categoría (opcional)</label>
+                      <input
+                        type="text"
+                        value={formData.category || ""}
+                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-medium"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">Servicio ID (opcional)</label>
+                      <input
+                        type="text"
+                        value={formData.service_id || ""}
+                        onChange={(e) => setFormData({ ...formData, service_id: e.target.value })}
+                        className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-medium"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">Promoción Activa</label>
+                      <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-2xl border border-border">
+                        <input
+                          type="checkbox"
+                          id="service_promo_active"
+                          checked={formData.is_active !== false}
+                          onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                          className="w-5 h-5 rounded border-border text-primary focus:ring-primary/20"
+                        />
+                        <label htmlFor="service_promo_active" className="text-sm font-bold text-foreground/70 cursor-pointer">
+                          Activa
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">Fecha Inicio</label>
+                      <input
+                        type="datetime-local"
+                        value={formData.start_date ? new Date(formData.start_date).toISOString().slice(0, 16) : ""}
+                        onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                        className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-medium"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">Fecha Fin</label>
+                      <input
+                        type="datetime-local"
+                        value={formData.end_date ? new Date(formData.end_date).toISOString().slice(0, 16) : ""}
+                        onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                        className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-medium"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "product_promotions" && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">Descuento (%)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        value={formData.discount_percent || ""}
+                        onChange={(e) => setFormData({ ...formData, discount_percent: parseFloat(e.target.value) })}
+                        className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-medium"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">Producto ID (opcional)</label>
+                      <input
+                        type="text"
+                        value={formData.product_id || ""}
+                        onChange={(e) => setFormData({ ...formData, product_id: e.target.value })}
+                        className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-medium"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">Categoría (opcional)</label>
+                      <input
+                        type="text"
+                        value={formData.category || ""}
+                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-medium"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">Promoción Activa</label>
+                      <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-2xl border border-border">
+                        <input
+                          type="checkbox"
+                          id="product_promo_active"
+                          checked={formData.is_active !== false}
+                          onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                          className="w-5 h-5 rounded border-border text-primary focus:ring-primary/20"
+                        />
+                        <label htmlFor="product_promo_active" className="text-sm font-bold text-foreground/70 cursor-pointer">
+                          Activa
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">Fecha Inicio</label>
+                      <input
+                        type="datetime-local"
+                        value={formData.start_date ? new Date(formData.start_date).toISOString().slice(0, 16) : ""}
+                        onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                        className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-medium"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">Fecha Fin</label>
+                      <input
+                        type="datetime-local"
+                        value={formData.end_date ? new Date(formData.end_date).toISOString().slice(0, 16) : ""}
+                        onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                        className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-medium"
+                      />
+                    </div>
                   </div>
                 </div>
               )}

@@ -22,7 +22,9 @@ import {
     CheckCircle2,
     AlertCircle,
     Info,
-    Calendar
+    Calendar,
+    Sparkles,
+    BadgePercent
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "@/hooks/use-toast";
@@ -137,6 +139,9 @@ const AdminDashboard = () => {
     const sidebarLinks = [
         { id: "overview", label: "Resumen", icon: LayoutDashboard },
         { id: "bookings", label: "Reservas", icon: Calendar },
+        { id: "promotions", label: "Promos Home", icon: ImageIcon },
+        { id: "service_promotions", label: "Promos Servicios", icon: Sparkles },
+        { id: "product_promotions", label: "Promos Tienda", icon: BadgePercent },
         { id: "services", label: "Servicios", icon: Scissors },
         { id: "products", label: "Tienda", icon: ShoppingBag },
         { id: "team", label: "Equipo", icon: Users },

@@ -64,12 +64,39 @@ const initialProducts = [
   },
 ];
 
+type ProductItem = {
+  id: string;
+  name: string;
+  description?: string;
+  short_description?: string;
+  price: number;
+  image?: string;
+  image_url?: string;
+  category?: string;
+  stripe_price_id?: string;
+  discountedPrice?: number;
+  promo?: ProductPromotion | null;
+};
+
+type ProductPromotion = {
+  id: string | number;
+  title?: string;
+  description?: string;
+  discount_percent: number;
+  start_date?: string;
+  end_date?: string;
+  is_active?: boolean;
+  product_id?: string;
+  category?: string;
+};
+
 const Tienda = () => {
   const { addItem, setCartOpen } = useCart();
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState<ProductItem[]>(initialProducts as ProductItem[]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [productPromotions, setProductPromotions] = useState<ProductPromotion[]>([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -82,17 +109,17 @@ const Tienda = () => {
 
         if (error) {
           console.error("Supabase fetch error:", error);
-          setProducts(initialProducts);
+          setProducts(initialProducts as ProductItem[]);
         } else if (data && data.length > 0) {
           console.log("Products fetched successfully from Supabase:", data.length);
-          setProducts(data);
+          setProducts(data as ProductItem[]);
         } else {
           console.warn("No products found in Supabase products table.");
-          setProducts(initialProducts);
+          setProducts(initialProducts as ProductItem[]);
         }
       } catch (err) {
         console.error("Unexpected error fetching products:", err);
-        setProducts(initialProducts);
+        setProducts(initialProducts as ProductItem[]);
       } finally {
         setIsLoading(false);
       }
@@ -114,16 +141,70 @@ const Tienda = () => {
     };
   }, []);
 
-  const handleOpenDetail = (product: any) => {
-    setSelectedProduct(product);
+  useEffect(() => {
+    const fetchPromotions = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("product_promotions")
+          .select("*")
+          .eq("is_active", true)
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+        setProductPromotions(data || []);
+      } catch (err) {
+        console.error("Error fetching product promotions:", err);
+        setProductPromotions([]);
+      }
+    };
+
+    fetchPromotions();
+
+    const promoChannel = supabase
+      .channel("public:product_promotions")
+      .on("postgres_changes", { event: "*", schema: "public", table: "product_promotions" }, () => {
+        fetchPromotions();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(promoChannel);
+    };
+  }, []);
+
+  const getActivePromotion = (product: ProductItem) => {
+    const now = new Date();
+    const promos = productPromotions.filter((promo) => {
+      const startsAt = promo.start_date ? new Date(promo.start_date) : null;
+      const endsAt = promo.end_date ? new Date(promo.end_date) : null;
+      if (promo.is_active === false) return false;
+      if (startsAt && now < startsAt) return false;
+      if (endsAt && now > endsAt) return false;
+      const matchesProduct = promo.product_id && promo.product_id === product.id;
+      const matchesCategory = promo.category && promo.category === product.category;
+      return matchesProduct || matchesCategory;
+    });
+
+    if (promos.length === 0) return null;
+    return promos.sort((a, b) => (b.discount_percent || 0) - (a.discount_percent || 0))[0];
+  };
+
+  const handleOpenDetail = (product: ProductItem) => {
+    const promo = getActivePromotion(product);
+    const discount = promo?.discount_percent ? promo.discount_percent / 100 : 0;
+    const discountedPrice = product.price - product.price * discount;
+    setSelectedProduct({ ...product, promo, discountedPrice });
     setIsModalOpen(true);
   };
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = (product: ProductItem) => {
+    const promo = product.promo || getActivePromotion(product);
+    const discount = promo?.discount_percent ? promo.discount_percent / 100 : 0;
+    const price = product.discountedPrice || product.price - product.price * discount;
     addItem({
       id: product.id,
       name: product.name,
-      price: product.price,
+      price,
       image: product.image || product.image_url || "",
       stripe_price_id: product.stripe_price_id,
     });
@@ -171,14 +252,18 @@ const Tienda = () => {
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
               <AnimatePresence>
-                {products.map((product, index) => (
+                {products.map((product, index) => {
+                  const promo = getActivePromotion(product);
+                  const discount = promo?.discount_percent ? promo.discount_percent / 100 : 0;
+                  const discountedPrice = product.price - product.price * discount;
+                  return (
                   <motion.article
                     key={product.id}
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: index * 0.1 }}
                     className="glass-card rounded-[2.5rem] overflow-hidden group flex flex-col h-full cursor-pointer"
-                    onClick={() => handleOpenDetail(product)}
+                    onClick={() => handleOpenDetail({ ...product, promo, discountedPrice })}
                   >
                     <div className="relative h-72 overflow-hidden bg-muted">
                       <img
@@ -199,6 +284,11 @@ const Tienda = () => {
                             <Star size={10} fill="currentColor" /> Best Seller
                           </span>
                         )}
+                        {promo && (
+                          <span className="bg-primary text-white text-[10px] font-bold px-4 py-2 rounded-full uppercase tracking-widest shadow-lg">
+                            -{promo.discount_percent}%
+                          </span>
+                        )}
                         <span className="bg-white/90 backdrop-blur-md text-foreground text-[10px] font-bold px-4 py-2 rounded-full uppercase tracking-widest shadow-md">
                           {product.category || 'Belleza'}
                         </span>
@@ -216,15 +306,22 @@ const Tienda = () => {
                       <div className="flex items-center justify-between pt-6 border-t border-border mt-auto">
                         <div className="flex flex-col">
                           <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Precio</span>
-                          <span className="text-gold font-black text-3xl">
-                            {product.price.toFixed(2)}€
-                          </span>
+                          <div className="flex items-end gap-3">
+                            <span className="text-gold font-black text-3xl">
+                              {discountedPrice.toFixed(2)}€
+                            </span>
+                            {promo && (
+                              <span className="text-xs text-muted-foreground line-through font-bold pb-1">
+                                {product.price.toFixed(2)}€
+                              </span>
+                            )}
+                          </div>
                         </div>
                         <div
                           className="flex items-center gap-3 bg-gold text-white px-8 py-4 rounded-2xl text-sm font-bold hover:shadow-xl hover:shadow-gold/30 hover:-translate-y-1 transition-all active:scale-95"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleAddToCart(product);
+                            handleAddToCart({ ...product, promo, discountedPrice });
                           }}
                         >
                           <ShoppingBag size={18} />
@@ -233,7 +330,8 @@ const Tienda = () => {
                       </div>
                     </div>
                   </motion.article>
-                ))}
+                );
+                })}
               </AnimatePresence>
             </div>
           )}
