@@ -4,11 +4,11 @@ import { ArrowRight, Sparkles, Clock, Award } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const heroVideos = [
-  "public/videos/hersection.mp4",
-  "public/videos/1.mp4",
-  "public/videos/2.mp4",
-  "public/videos/3.mp4",
-  "public/videos/4.mp4",
+  "/videos/hersection.mp4",
+  "/videos/1.mp4",
+  "/videos/2.mp4",
+  "/videos/3.mp4",
+  "/videos/4.mp4",
 ];
 
 const heroPhrases = [
