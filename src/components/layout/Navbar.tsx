@@ -9,7 +9,7 @@ const TREATWELL_LINK = "https://www.treatwell.es/establecimiento/mani-pedi-1/";
 const navLinks = [
   { name: "Inicio", href: "/" },
   { name: "Servicios", href: "/servicios" },
-  { name: "Tienda", href: "/tienda" },
+  // { name: "Tienda", href: "/tienda" }, // Temporalmente oculto
   { name: "Galería", href: "/galeria" },
   { name: "Equipo", href: "/equipo" },
   { name: "Contacto", href: "/contacto" },
@@ -86,6 +86,7 @@ const Navbar = () => {
 
             {/* Actions */}
             <div className="flex items-center gap-3">
+              {/* Carrito oculto temporalmente mientras la Tienda está en desarrollo
               <button
                 onClick={() => setCartOpen(true)}
                 className={`relative p-2.5 rounded-full transition-all duration-300 active:scale-90 ${isScrolled ? "hover:bg-primary/5" : "hover:bg-white/20"
@@ -103,6 +104,7 @@ const Navbar = () => {
                   </motion.span>
                 )}
               </button>
+              */}
 
               <a
                 href={TREATWELL_LINK}

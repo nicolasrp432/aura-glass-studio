@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Star, Sparkles } from "lucide-react";
+import { Star, Sparkles, Instagram, Facebook, MessageCircle } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import servicesData from "@/data/services.json";
 import { supabase } from "@/lib/supabase";
@@ -23,7 +23,18 @@ const Equipo = () => {
           .order('id', { ascending: true });
 
         if (!error && data && data.length > 0) {
-          setTeam(data);
+          // Fusionar con los datos locales para asegurar que las imágenes carguen
+          // si en Supabase la columna image_url está vacía o es nula.
+          const mergedData = data.map(dbMember => {
+            const localMember = servicesData.team.find(
+              local => local.name.toLowerCase() === dbMember.name.toLowerCase()
+            );
+            return {
+              ...dbMember,
+              image_url: localMember?.image_url || dbMember.image_url
+            };
+          });
+          setTeam(mergedData);
         } else {
           console.warn("Using local fallback data for team:", error);
           setTeam(servicesData.team);
@@ -86,7 +97,7 @@ const Equipo = () => {
               <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
             </div>
           ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-[180px] pt-[150px] pb-16">
               {team.map((member, index) => (
                 <motion.article
                   key={member.id}
@@ -96,57 +107,69 @@ const Equipo = () => {
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   onMouseEnter={() => setActiveCard(member.id)}
                   onMouseLeave={() => setActiveCard(null)}
-                  className="glass-card rounded-[2.5rem] overflow-hidden group cursor-pointer h-full flex flex-col"
+                  className="relative group cursor-pointer h-full flex flex-col"
                 >
-                  <div className="relative h-96 overflow-hidden bg-muted">
-                    {/* Team Member Photo */}
+                  {/* Imagen Pop-out (Completamente fuera del overflow de la tarjeta) */}
+                  <div className="absolute top-[-160px] left-0 w-full h-[300px] flex justify-center pointer-events-none z-30">
                     <img
                       src={member.image_url || member.image}
                       alt={member.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="h-full w-auto object-contain object-bottom drop-shadow-[0_20px_20px_rgba(0,0,0,0.15)] transition-transform duration-700 group-hover:scale-[1.08] group-hover:-translate-y-3 origin-bottom max-w-[120%]"
                     />
+                  </div>
 
-                    {/* Decorative Gradient Overlay */}
-                    <div className={`absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500`} />
+                  {/* Insignia de Rating (Fuera del overflow) */}
+                  <div className="absolute top-[-20px] right-6 bg-white px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg border border-black/5 z-40 transition-opacity duration-300 group-hover:opacity-0 delay-100">
+                    <Star size={16} className="text-gold fill-gold" />
+                    <span className="text-sm font-bold text-gray-900">{member.rating}</span>
+                  </div>
 
-                    {/* Bio Overlay on Hover */}
-                    <motion.div
-                      initial={false}
-                      animate={{
-                        opacity: activeCard === member.id ? 1 : 0,
-                      }}
-                      className="absolute inset-0 bg-primary/90 backdrop-blur-md p-8 flex flex-col justify-center text-center pointer-events-none transition-all duration-500"
-                    >
-                      <div className="space-y-4">
-                        <Sparkles size={24} className="text-white/50 mx-auto" />
-                        <p className="text-white text-base leading-relaxed italic font-medium">
+                  {/* Fondo y Estructura de la Tarjeta */}
+                  <div className="bg-card rounded-[2.5rem] shadow-xl pt-[140px] pb-10 px-6 flex flex-col flex-grow relative overflow-hidden group-hover:shadow-2xl transition-shadow duration-500">
+
+                    {/* Contenido de Texto Principal */}
+                    <div className="flex flex-col items-center justify-start flex-grow text-center relative z-10 transition-opacity duration-300 group-hover:opacity-0 delay-75">
+                      <span className="text-[11px] text-primary font-bold uppercase tracking-[0.25em] mb-2">
+                        {member.role || "ESTETICISTA"}
+                      </span>
+
+                      <h3 className="font-display text-4xl font-bold text-foreground mb-4">
+                        {member.name}
+                      </h3>
+
+                      <div className="w-10 h-[3px] bg-primary mx-auto mb-5 rounded-full" />
+
+                      <p className="text-muted-foreground text-[15px] leading-relaxed mb-6 flex-grow max-w-[220px] mx-auto">
+                        Especialista en {member.specialty?.toLowerCase() || (member.role?.toLowerCase())}
+                      </p>
+
+                      <div className="flex items-center justify-center gap-2 text-[10px] text-muted-foreground/80 font-bold uppercase tracking-widest mt-auto">
+                        <Sparkles size={12} className="text-primary/60" />
+                        {member.reviews || 0} RESEÑAS VERIFICADAS
+                      </div>
+                    </div>
+
+                    {/* Bio Hover Overlay (Sustituye al texto base) */}
+                    <div className="absolute inset-0 bg-primary/95 backdrop-blur-md pt-[140px] pb-10 px-8 flex flex-col justify-between text-center transition-all duration-500 z-20 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
+                      <div className="flex flex-col items-center flex-grow justify-center">
+                        <Sparkles size={24} className="text-white/50 mb-4" />
+                        <p className="text-white text-[15px] leading-relaxed italic font-medium">
                           "{member.bio}"
                         </p>
                       </div>
-                    </motion.div>
 
-                    {/* Rating Badge */}
-                    <div className="absolute top-6 right-6 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-md">
-                      <Star size={14} className="text-gold fill-gold" />
-                      <span className="text-xs font-bold">{member.rating}</span>
-                    </div>
-                  </div>
-
-                  <div className="p-10 flex flex-col flex-grow text-center">
-                    <span className="text-[10px] text-primary font-black uppercase tracking-[0.2em] mb-3 block">
-                      {member.role}
-                    </span>
-                    <h3 className="font-display text-3xl font-bold mb-3 group-hover:text-primary transition-colors">
-                      {member.name}
-                    </h3>
-                    <div className="w-12 h-1 bg-gold/30 mx-auto mb-6 rounded-full group-hover:w-20 transition-all duration-300" />
-                    <p className="text-muted-foreground text-sm font-medium mb-6 flex-grow">
-                      Especialista en {member.specialty?.toLowerCase() || (member.role?.toLowerCase())}
-                    </p>
-
-                    <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground/60 font-bold uppercase tracking-tighter">
-                      <Sparkles size={12} className="text-gold" />
-                      {member.reviews || 0} Reseñas Verificadas
+                      {/* Redes Sociales - Flotando abajo */}
+                      <div className="flex items-center justify-center gap-4 mt-6">
+                        <a href="https://www.instagram.com/manipedilasarenas/" target="_blank" rel="noopener noreferrer" className="bg-white/10 hover:bg-white text-white hover:text-primary p-3 rounded-full transition-all duration-300 hover:scale-110 shadow-lg">
+                          <Instagram size={18} />
+                        </a>
+                        <a href="https://www.facebook.com/manipedilasarenas" target="_blank" rel="noopener noreferrer" className="bg-white/10 hover:bg-white text-white hover:text-primary p-3 rounded-full transition-all duration-300 hover:scale-110 shadow-lg">
+                          <Facebook size={18} />
+                        </a>
+                        <a href="https://wa.me/34944123456" target="_blank" rel="noopener noreferrer" className="bg-white/10 hover:bg-white text-white hover:text-primary p-3 rounded-full transition-all duration-300 hover:scale-110 shadow-lg">
+                          <MessageCircle size={18} />
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </motion.article>

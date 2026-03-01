@@ -37,7 +37,8 @@ const Contacto = () => {
     setStatus("loading");
 
     try {
-      const { error } = await supabase
+      // 1. Guardar el mensaje en la base de datos (se mantiene por historial/backup)
+      const { error: dbError } = await supabase
         .from('messages')
         .insert([
           {
@@ -49,7 +50,17 @@ const Contacto = () => {
           }
         ]);
 
-      if (error) throw error;
+      if (dbError) throw dbError;
+
+      // 2. Ejecutar la Edge Function para enviar el correo mediante Resend
+      const { error: fnError } = await supabase.functions.invoke('send-contact-email', {
+        body: formData,
+      });
+
+      if (fnError) {
+        console.warn("Mensaje guardado en DB pero falló el envío por email:", fnError);
+        // Opcional: throw fnError si quieres que el usuario vea un error completo
+      }
 
       setStatus("success");
       toast({
@@ -72,7 +83,7 @@ const Contacto = () => {
 
   const contactInfo = [
     { icon: Phone, label: "Teléfono", value: "+34 944 123 456", href: "tel:+34944123456", sub: "Llámanos directamente" },
-    { icon: Mail, label: "Email", value: "info@manipedi.es", href: "mailto:info@manipedi.es", sub: "Consultas generales" },
+    { icon: Mail, label: "Email", value: "manipedilasarenas18@gmail.com", href: "mailto:manipedilasarenas18@gmail.com", sub: "Consultas generales" },
     { icon: MapPin, label: "Ubicación", value: "Urkijo Kalea, 15, Getxo", sub: "A 3 min del metro Areeta" },
   ];
 

@@ -5,12 +5,14 @@ import Layout from "@/components/layout/Layout";
 import { supabase } from "@/lib/supabase";
 
 const initialGallery = [
-    { id: 1, url: "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800&q=80", title: "Nail Art Floral", category: "Manicura" },
-    { id: 2, url: "https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=800&q=80", title: "Pedicura Spa Luxe", category: "Pedicura" },
-    { id: 3, url: "https://images.unsplash.com/photo-1636019281327-4c5fba60c0f9?w=800&q=80", title: "Minimalista Blanco", category: "Manicura" },
-    { id: 4, url: "https://images.unsplash.com/photo-1600612253971-422e7f5c5904?w=800&q=80", title: "Fortalecimiento Natural", category: "Tratamientos" },
-    { id: 5, url: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=800&q=80", title: "Rojo Clásico Vibrante", category: "Manicura" },
-    { id: 6, url: "https://images.unsplash.com/photo-1510557880182-3d4d3cba3f21?w=800&q=80", title: "Pestañas Hollywood", category: "Pestañas" },
+    { id: 1, url: "/gallery/IMG_4762.jpg", title: "Nail Art Floral", category: "Manicura" },
+    { id: 2, url: "/gallery/IMG_4764.jpg", title: "Pedicura Spa Luxe", category: "Pedicura" },
+    { id: 3, url: "/gallery/IMG_4767.jpg", title: "Diseño Elegante", category: "Manicura" },
+    { id: 4, url: "/gallery/IMG_4768.jpg", title: "Fortalecimiento Natural", category: "Tratamientos" },
+    { id: 5, url: "/gallery/IMG_4770.jpg", title: "Estilo Moderno", category: "Manicura" },
+    { id: 6, url: "/gallery/IMG_4771.jpg", title: "Colores Vibrantes", category: "Manicura" },
+    { id: 7, url: "/gallery/IMG_4772.jpg", title: "Acabado Perfecto", category: "Pedicura" },
+    { id: 8, url: "/gallery/IMG_4773.jpg", title: "Arte en Uñas", category: "Manicura" },
 ];
 
 const Galeria = () => {
@@ -28,7 +30,14 @@ const Galeria = () => {
                     .order('id', { ascending: false });
 
                 if (!error && data && data.length > 0) {
-                    setItems(data);
+                    // Deduplicate by URL to avoid repeated images
+                    const seen = new Set<string>();
+                    const unique = data.filter((item) => {
+                        if (seen.has(item.url)) return false;
+                        seen.add(item.url);
+                        return true;
+                    });
+                    setItems(unique);
                 } else {
                     console.warn("Using local fallback data for gallery due to empty data or error:", error);
                 }
