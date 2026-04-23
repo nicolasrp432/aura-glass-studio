@@ -52,10 +52,26 @@ serve(async (req: any) => {
                 Authorization: `Bearer ${resendApiKey}`,
             },
             body: JSON.stringify({
-                from: "ManiPedi Web <onboarding@resend.dev>",
+                from: "ManiPedi Web <notificaciones@manipedibellezaintegral.es>",
                 to: ["manipedilasarenas18@gmail.com"],
+                reply_to: email,
                 subject: `Nuevo mensaje de Contacto: ${subject}`,
-                html: `<h2>Nuevo Mensaje</h2><p><b>Nombre:</b> ${name}</p><p><b>Email:</b> ${email}</p><p><b>Asunto:</b> ${subject}</p><p><b>Mensaje:</b> ${message}</p>`
+                html: `
+                    <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
+                        <h2 style="color: #D4AF37;">Nuevo Mensaje desde la Web</h2>
+                        <hr />
+                        <p><b>Nombre:</b> ${name}</p>
+                        <p><b>Email:</b> ${email}</p>
+                        <p><b>Asunto:</b> ${subject}</p>
+                        <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin-top: 20px;">
+                            <p><b>Mensaje:</b></p>
+                            <p>${message}</p>
+                        </div>
+                        <footer style="margin-top: 20px; font-size: 12px; color: #888;">
+                            Este mensaje fue enviado desde el formulario de contacto de ManiPedi Las Arenas.
+                        </footer>
+                    </div>
+                `
             }),
         });
 

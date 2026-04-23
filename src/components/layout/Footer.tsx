@@ -99,7 +99,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="text-xs text-white/40 uppercase tracking-tighter mb-1">Llámanos</p>
-                  <a href="tel:+34944123456" className="text-sm font-medium hover:text-primary transition-colors">+34 944 123 456</a>
+                  <a href="tel:+34944123456" className="text-sm font-medium hover:text-primary transition-colors">+34 846 66 54 92</a>
                 </div>
               </li>
               <li className="flex items-start gap-4">

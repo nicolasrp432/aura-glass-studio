@@ -82,16 +82,16 @@ const Contacto = () => {
   };
 
   const contactInfo = [
-    { icon: Phone, label: "Teléfono", value: "+34 944 123 456", href: "tel:+34944123456", sub: "Llámanos directamente" },
+    { icon: Phone, label: "Teléfono", value: "+34 846 66 54 92", href: "tel:+34846665492", sub: "Llámanos directamente" },
     { icon: Mail, label: "Email", value: "manipedilasarenas18@gmail.com", href: "mailto:manipedilasarenas18@gmail.com", sub: "Consultas generales" },
-    { icon: MapPin, label: "Ubicación", value: "Urkijo Kalea, 15, Getxo", sub: "A 3 min del metro Areeta" },
+    { icon: MapPin, label: "Ubicación", value: "Urkijo Kalea, 15, Getxo", href: "https://maps.app.goo.gl/vafawG18eUhB3EJb8", sub: "A 3 min del metro Areeta" },
   ];
 
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="pt-40 pb-20 relative overflow-hidden">
-        <div className="orb orb-gold top-[-10%] right-[-10%] w-[40%] h-[40%]" />
+      <section className="pt-28 md:pt-40 pb-12 md:pb-20 relative overflow-hidden">
+        <div className="absolute pointer-events-none -z-10 bg-gold/10 blur-3xl rounded-full top-[-10%] right-[-10%] w-64 md:w-[40%] h-64 md:h-[40%]" />
         <div className="container mx-auto px-6 text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -101,7 +101,7 @@ const Contacto = () => {
             <span className="flex items-center justify-center gap-2 text-gold font-bold mb-4 tracking-[0.3em] uppercase text-xs">
               <MessageCircle size={14} /> Contacto & Reservas <MessageCircle size={14} />
             </span>
-            <h1 className="font-display text-5xl md:text-7xl font-bold text-foreground mb-8">
+            <h1 className="font-display text-4xl md:text-5xl lg:text-7xl font-bold text-foreground mb-6 md:mb-8">
               Tu Momento <br />
               <span className="text-gold italic">Empieza Aquí</span>
             </h1>
@@ -113,9 +113,9 @@ const Contacto = () => {
         </div>
       </section>
 
-      <section className="pb-32 relative z-10">
-        <div className="container mx-auto px-6">
-          <div className="grid lg:grid-cols-12 gap-12 items-start">
+      <section className="pb-20 md:pb-32 relative z-10">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="grid lg:grid-cols-12 gap-8 md:gap-12 items-start">
 
             {/* Contact Information */}
             <div className="lg:col-span-5 space-y-8">
@@ -127,15 +127,22 @@ const Contacto = () => {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
-                    className="glass-card p-8 rounded-[2rem] flex gap-6 items-center group hover:bg-white/90 transition-all"
+                    className="glass-card p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] flex gap-4 md:gap-6 items-center group hover:bg-white/90 transition-all"
                   >
-                    <div className="w-16 h-16 bg-gold/10 rounded-2xl flex items-center justify-center text-gold group-hover:scale-110 transition-transform">
+                    <div className="w-14 h-14 md:w-16 md:h-16 flex-shrink-0 bg-gold/10 rounded-xl md:rounded-2xl flex items-center justify-center text-gold group-hover:scale-110 transition-transform">
                       <item.icon size={28} />
                     </div>
                     <div>
                       <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{item.label}</p>
                       {item.href ? (
-                        <a href={item.href} className="text-xl font-bold text-foreground hover:text-gold transition-colors">{item.value}</a>
+                        <a 
+                          href={item.href}
+                          target={item.href.startsWith("http") ? "_blank" : undefined}
+                          rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                          className="text-xl font-bold text-foreground hover:text-gold transition-colors"
+                        >
+                          {item.value}
+                        </a>
                       ) : (
                         <p className="text-xl font-bold text-foreground">{item.value}</p>
                       )}
@@ -150,9 +157,9 @@ const Contacto = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="glass-card p-10 rounded-[2.5rem] border-white/40"
+                className="glass-card p-6 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] border-white/40"
               >
-                <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
                   <div>
                     <h3 className="font-display text-2xl font-bold mb-1">Síguenos</h3>
                     <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">En nuestras redes sociales</p>
@@ -182,7 +189,7 @@ const Contacto = () => {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="glass-card rounded-[2.5rem] overflow-hidden h-72 relative group shadow-2xl border-white/50"
+                className="glass-card rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden h-64 md:h-72 relative group shadow-2xl border-white/50"
               >
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2902.936666611586!2d-3.0076246234327575!3d43.32604677913419!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd4e5bb090b8e663%3A0xc3f6089cc5938833!2sCalle%20Urquijo%2C%2015%2C%2048930%20Getxo%2C%20Bizkaia!5e0!3m2!1ses!2ses!4v1715456789012!5m2!1ses!2ses"
@@ -195,8 +202,9 @@ const Contacto = () => {
                 />
                 <div className="absolute inset-0 bg-gold/10 pointer-events-none mix-blend-overlay group-hover:opacity-0 transition-opacity duration-700" />
                 <a
-                  href="https://maps.google.com"
+                  href="https://maps.app.goo.gl/vafawG18eUhB3EJb8"
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="absolute bottom-6 right-6 bg-white/90 backdrop-blur-md px-6 py-3 rounded-2xl text-xs font-bold shadow-xl flex items-center gap-2 hover:bg-white transition-all"
                 >
                   <MapPin size={14} className="text-gold" /> CÓMO LLEGAR
@@ -209,19 +217,19 @@ const Contacto = () => {
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="lg:col-span-7 bg-white/40 backdrop-blur-2xl p-10 md:p-16 rounded-[3rem] shadow-2xl border border-white/60 relative overflow-hidden"
+              className="lg:col-span-7 bg-white/40 backdrop-blur-2xl p-6 md:p-10 lg:p-16 rounded-[1.5rem] md:rounded-[3rem] shadow-2xl border border-white/60 relative overflow-hidden"
             >
               <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none">
                 <Send size={200} />
               </div>
 
               <div className="mb-12 relative z-10">
-                <h2 className="font-display text-4xl font-bold mb-4">Envíanos un <span className="text-gold">Mensaje</span></h2>
+                <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">Envíanos un <span className="text-gold">Mensaje</span></h2>
                 <p className="text-muted-foreground font-medium">¿Tienes dudas? Responderemos en menos de 24h laborables.</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
-                <div className="grid md:grid-cols-2 gap-8">
+                <div className="grid md:grid-cols-2 gap-6 md:gap-8">
                   <div className="space-y-3">
                     <label className="text-[10px] font-black text-foreground/70 uppercase tracking-widest flex items-center gap-2">
                       <User size={14} className="text-gold" /> Tu Nombre
@@ -264,11 +272,11 @@ const Contacto = () => {
                   />
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-8 pt-4">
+                <div className="flex flex-col sm:flex-row items-center gap-6 md:gap-8 pt-4">
                   <button
                     type="submit"
                     disabled={status === "loading"}
-                    className="w-full sm:w-auto btn-primary py-5 px-12 text-sm flex items-center justify-center gap-3 relative overflow-hidden group shadow-xl shadow-primary/20"
+                    className="w-full sm:w-auto btn-primary py-4 md:py-5 px-8 md:px-12 text-sm flex items-center justify-center gap-3 relative overflow-hidden group shadow-xl shadow-primary/20"
                   >
                     <AnimatePresence mode="wait">
                       {status === "loading" ? (
@@ -309,7 +317,7 @@ const Contacto = () => {
                     href={TREATWELL_LINK}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full sm:w-auto bg-transparent border-2 border-gold text-gold px-10 py-5 rounded-[1.5rem] font-bold text-sm hover:bg-gold hover:text-white transition-all flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto bg-transparent border-2 border-gold text-gold px-6 md:px-10 py-4 md:py-5 rounded-[1rem] md:rounded-[1.5rem] font-bold text-sm hover:bg-gold hover:text-white transition-all flex items-center justify-center gap-2"
                   >
                     RESERVAR AHORA <ExternalLink size={16} />
                   </a>
@@ -321,11 +329,11 @@ const Contacto = () => {
       </section>
 
       {/* Trust Quote */}
-      <section className="pb-32 container mx-auto px-6">
+      <section className="pb-20 md:pb-32 container mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          className="text-center p-12 glass-content rounded-[3rem] border-white/40"
+          className="text-center p-8 md:p-12 glass-content rounded-[2rem] md:rounded-[3rem] border-white/40"
         >
           <Sparkles className="mx-auto text-gold mb-6" size={32} />
           <p className="font-display text-2xl italic text-foreground max-w-2xl mx-auto">

@@ -118,7 +118,7 @@ const Navbar = () => {
 
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
-                className={`lg:hidden p-2.5 rounded-full transition-all active:scale-90 ${isScrolled ? "hover:bg-primary/5" : "hover:bg-white/20"
+                className={`lg:hidden p-2.5 rounded-full transition-all active:scale-90 text-foreground ${isScrolled ? "hover:bg-primary/5" : "hover:bg-white/20"
                   }`}
                 aria-label="Abrir menú"
               >
@@ -197,7 +197,7 @@ const Navbar = () => {
 
                   <div className="grid grid-cols-2 gap-3">
                     <a
-                      href="tel:+34944123456"
+                      href="tel:+34846665492"
                       className="flex items-center justify-center gap-2 py-3 bg-white border border-gray-200 rounded-xl text-xs font-medium text-foreground/70 hover:border-primary/30 hover:text-primary transition-all"
                     >
                       <Phone size={14} />

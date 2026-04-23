@@ -78,7 +78,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="inline-flex items-center gap-2 glass-deco rounded-full px-5 py-2 mb-8 border-primary/20"
+            className="inline-flex items-center gap-2 glass-deco rounded-full px-5 py-2 mb-8 mt-8 sm:mt-0 border-primary/20"
           >
             <Sparkles size={16} className="text-primary animate-pulse" />
             <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase text-foreground/90">Salón Premium en Las Arenas, Getxo</span>
