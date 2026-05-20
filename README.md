@@ -81,6 +81,32 @@ Este proyecto utiliza un stack tecnológico moderno enfocado en el rendimiento y
    npm run dev
    ```
 
+### Formulario de contacto
+- El formulario guarda el mensaje en la tabla `messages`.
+- Un trigger en Supabase llama a la Edge Function `send-contact-email`.
+- La Edge Function usa Resend para enviar el correo.
+
+### Variables de correo
+- `RESEND_API_KEY` en Supabase Edge Functions.
+- `RESEND_FROM` opcional, por defecto `ManiPedi Web <info@manipedibellezaintegral.es>`.
+- `CONTACT_NOTIFICATION_EMAIL` opcional.
+
+### Prueba local
+1. Ejecuta `npm run dev`.
+2. Abre `/contacto`.
+3. Envía un mensaje de prueba.
+4. Verifica en Supabase que la fila aparece en `messages`.
+5. Verifica en Supabase Logs que la función `send-contact-email` se ejecutó.
+6. Si no llega el correo, revisa que el `from` esté verificado en Resend.
+7. Prueba directa por terminal:
+   ```bash
+   node scripts/test-contact-email.js
+   ```
+8. Prueba del trigger:
+   ```bash
+   node scripts/test-contact-email.js insert
+   ```
+
 ---
 
 ## 🚢 Despliegue

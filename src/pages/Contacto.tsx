@@ -37,7 +37,7 @@ const Contacto = () => {
     setStatus("loading");
 
     try {
-      // 1. Guardar el mensaje en la base de datos (se mantiene por historial/backup)
+      // 1. Guardar el mensaje en la base de datos
       const { error: dbError } = await supabase
         .from('messages')
         .insert([
@@ -51,29 +51,6 @@ const Contacto = () => {
         ]);
 
       if (dbError) throw dbError;
-
-      // 2. Enviar el correo usando Web3Forms (Alternativa directa a Edge Functions)
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          access_key: "f7d75005-4f76-4d5c-9c71-c0819ed95687", // Tu clave de acceso gratuita
-          name: formData.name,
-          email: formData.email,
-          subject: `Nuevo mensaje: ${formData.subject}`,
-          message: formData.message,
-          from_name: "ManiPedi Web",
-          to_email: "manipedilasarenas18@gmail.com"
-        }),
-      });
-
-      const result = await response.json();
-      if (!result.success) {
-        console.warn("Mensaje en DB pero falló envío de email:", result.message);
-      }
 
       setStatus("success");
       toast({

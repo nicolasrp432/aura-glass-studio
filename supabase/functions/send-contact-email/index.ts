@@ -3,6 +3,8 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 // @ts-ignore
 const resendApiKey = Deno.env.get("RESEND_API_KEY");
+const resendFrom = Deno.env.get("RESEND_FROM") || "ManiPedi Web <info@manipedibellezaintegral.es>";
+const notifyTo = Deno.env.get("CONTACT_NOTIFICATION_EMAIL") || "manipedilasarenas18@gmail.com";
 
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -25,6 +27,12 @@ serve(async (req: any) => {
     }
 
     try {
+        console.log("send-contact-email: request received", { method: req.method });
+
+        if (!resendApiKey) {
+            return new Response(JSON.stringify({ error: "RESEND_API_KEY is not configured" }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 });
+        }
+
         const data = await req.json();
         let payload: EmailPayload;
 
@@ -44,6 +52,7 @@ serve(async (req: any) => {
         }
 
         const { name, email, subject, message } = payload;
+        console.log("send-contact-email: payload", { name, email, subject });
 
         const res = await fetch("https://api.resend.com/emails", {
             method: "POST",
@@ -52,8 +61,8 @@ serve(async (req: any) => {
                 Authorization: `Bearer ${resendApiKey}`,
             },
             body: JSON.stringify({
-                from: "ManiPedi Web <notificaciones@manipedibellezaintegral.es>",
-                to: ["manipedilasarenas18@gmail.com"],
+                from: resendFrom,
+                to: [notifyTo],
                 reply_to: email,
                 subject: `Nuevo mensaje de Contacto: ${subject}`,
                 html: `
@@ -75,14 +84,16 @@ serve(async (req: any) => {
             }),
         });
 
+        const responseText = await res.text();
+        console.log("send-contact-email: resend response", { status: res.status, ok: res.ok, responseText });
+
         if (!res.ok) {
-            const errorText = await res.text();
-            return new Response(JSON.stringify({ error: errorText }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 });
+            return new Response(JSON.stringify({ error: responseText }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 502 });
         }
 
-        const responseData = await res.json();
-        return new Response(JSON.stringify(responseData), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 });
+        return new Response(responseText, { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 });
     } catch (error: any) {
+        console.error("send-contact-email: error", error);
         return new Response(JSON.stringify({ error: error.message }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 });
     }
 });
