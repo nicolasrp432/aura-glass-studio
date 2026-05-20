@@ -52,14 +52,27 @@ const Contacto = () => {
 
       if (dbError) throw dbError;
 
-      // 2. Ejecutar la Edge Function para enviar el correo mediante Resend
-      const { error: fnError } = await supabase.functions.invoke('send-contact-email', {
-        body: formData,
+      // 2. Enviar el correo usando Web3Forms (Alternativa directa a Edge Functions)
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: "f7d75005-4f76-4d5c-9c71-c0819ed95687", // Tu clave de acceso gratuita
+          name: formData.name,
+          email: formData.email,
+          subject: `Nuevo mensaje: ${formData.subject}`,
+          message: formData.message,
+          from_name: "ManiPedi Web",
+          to_email: "manipedilasarenas18@gmail.com"
+        }),
       });
 
-      if (fnError) {
-        console.warn("Mensaje guardado en DB pero falló el envío por email:", fnError);
-        // Opcional: throw fnError si quieres que el usuario vea un error completo
+      const result = await response.json();
+      if (!result.success) {
+        console.warn("Mensaje en DB pero falló envío de email:", result.message);
       }
 
       setStatus("success");

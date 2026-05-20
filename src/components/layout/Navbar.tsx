@@ -9,6 +9,7 @@ const TREATWELL_LINK = "https://www.treatwell.es/establecimiento/mani-pedi-1/";
 const navLinks = [
   { name: "Inicio", href: "/" },
   { name: "Servicios", href: "/servicios" },
+  { name: "Tratamientos", href: "/tratamientos-cabina" },
   // { name: "Tienda", href: "/tienda" }, // Temporalmente oculto
   { name: "Galería", href: "/galeria" },
   { name: "Equipo", href: "/equipo" },
