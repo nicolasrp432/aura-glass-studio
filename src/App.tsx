@@ -12,6 +12,9 @@ import Contacto from "./pages/Contacto";
 import NotFound from "./pages/NotFound";
 
 import Galeria from "./pages/Galeria";
+import Privacidad from "./pages/legal/Privacidad";
+import AvisoLegal from "./pages/legal/AvisoLegal";
+import Cookies from "./pages/legal/Cookies";
 import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import ScrollToTop from "./components/ScrollToTop";
@@ -33,6 +36,12 @@ const App = () => (
           {/* <Route path="/tienda" element={<Tienda />} /> */}{/* Temporalmente oculto - Tienda aún en desarrollo */}
           <Route path="/equipo" element={<Equipo />} />
           <Route path="/contacto" element={<Contacto />} />
+
+          {/* Legal Routes */}
+          <Route path="/privacidad" element={<Privacidad />} />
+          <Route path="/aviso-legal" element={<AvisoLegal />} />
+          <Route path="/legal" element={<AvisoLegal />} />
+          <Route path="/cookies" element={<Cookies />} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLogin />} />

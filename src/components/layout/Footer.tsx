@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Instagram, Facebook, Train } from "lucide-react";
+import { siteConfig } from "@/config/site";
+import { openCookiePreferences } from "@/lib/consent";
 
-const TREATWELL_LINK = "https://www.treatwell.es/establecimiento/mani-pedi-1/";
+const TREATWELL_LINK = siteConfig.booking.treatwell;
 
 const Footer = () => {
   return (
@@ -99,7 +101,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="text-xs text-white/40 uppercase tracking-tighter mb-1">Llámanos</p>
-                  <a href="tel:+34944123456" className="text-sm font-medium hover:text-primary transition-colors">+34 846 66 54 92</a>
+                  <a href={`tel:${siteConfig.contact.phoneHref}`} className="text-sm font-medium hover:text-primary transition-colors">{siteConfig.contact.phone}</a>
                 </div>
               </li>
               <li className="flex items-start gap-4">
@@ -147,10 +149,17 @@ const Footer = () => {
           <p className="text-xs text-white/30">
             © {new Date().getFullYear()} Mani Pedi Las Arenas. Todos los derechos reservados.
           </p>
-          <div className="flex gap-8">
+          <div className="flex flex-wrap justify-center gap-6 md:gap-8">
             <Link to="/privacidad" className="text-xs text-white/30 hover:text-white transition-colors">Privacidad</Link>
-            <Link to="/legal" className="text-xs text-white/30 hover:text-white transition-colors">Aviso Legal</Link>
+            <Link to="/aviso-legal" className="text-xs text-white/30 hover:text-white transition-colors">Aviso Legal</Link>
             <Link to="/cookies" className="text-xs text-white/30 hover:text-white transition-colors">Cookies</Link>
+            <button
+              type="button"
+              onClick={openCookiePreferences}
+              className="text-xs text-white/30 transition-colors hover:text-white"
+            >
+              Preferencias de privacidad
+            </button>
           </div>
         </div>
       </div>

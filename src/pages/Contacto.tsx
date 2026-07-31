@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Phone,
@@ -18,10 +19,18 @@ import {
   Facebook
 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
+import ConsentedMap from "@/components/legal/ConsentedMap";
 import { supabase } from "@/lib/supabase";
 import { toast } from "@/hooks/use-toast";
+import { siteConfig } from "@/config/site";
 
-const TREATWELL_LINK = "https://www.treatwell.es/establecimiento/mani-pedi-1/";
+const TREATWELL_LINK = siteConfig.booking.treatwell;
+
+/** Límites alineados con las restricciones CHECK de la tabla `messages`. */
+const FIELD_LIMITS = { name: 80, email: 120, subject: 120, message: 2000 };
+
+/** Tiempo mínimo de cumplimentación por debajo del cual se asume envío automatizado. */
+const MIN_FILL_TIME_MS = 2500;
 
 const Contacto = () => {
   const [formData, setFormData] = useState({
@@ -30,22 +39,43 @@ const Contacto = () => {
     subject: "Reserva",
     message: ""
   });
+  const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  /** Campo trampa invisible: solo los bots lo rellenan. */
+  const [honeypot, setHoneypot] = useState("");
+  const mountedAt = useRef(Date.now());
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!acceptedPrivacy) {
+      toast({
+        title: "Falta tu consentimiento",
+        description: "Necesitamos que aceptes la política de privacidad para poder responderte.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Antispam: descartamos en silencio los envíos automatizados.
+    if (honeypot || Date.now() - mountedAt.current < MIN_FILL_TIME_MS) {
+      setStatus("success");
+      setTimeout(() => setStatus("idle"), 5000);
+      return;
+    }
+
     setStatus("loading");
 
     try {
-      // 1. Guardar el mensaje en la base de datos
+      // Guardamos el mensaje en la base de datos; un trigger notifica al centro por email.
       const { error: dbError } = await supabase
         .from('messages')
         .insert([
           {
-            name: formData.name,
-            email: formData.email,
-            subject: formData.subject,
-            message: formData.message,
+            name: formData.name.trim().slice(0, FIELD_LIMITS.name),
+            email: formData.email.trim().slice(0, FIELD_LIMITS.email),
+            subject: formData.subject.trim().slice(0, FIELD_LIMITS.subject),
+            message: formData.message.trim().slice(0, FIELD_LIMITS.message),
             created_at: new Date().toISOString()
           }
         ]);
@@ -58,12 +88,15 @@ const Contacto = () => {
         description: "Nos pondremos en contacto contigo lo antes posible.",
       });
       setFormData({ name: "", email: "", subject: "Reserva", message: "" });
+      setAcceptedPrivacy(false);
+      mountedAt.current = Date.now();
     } catch (error: any) {
-      console.error("Error sending message:", error);
+      // No registramos el contenido del mensaje ni los datos de la persona.
+      console.error("Error sending message:", error?.code ?? "unknown_error");
       setStatus("error");
       toast({
         title: "Error al enviar",
-        description: error.message || "Por favor, inténtalo de nuevo más tarde.",
+        description: "No hemos podido enviar tu mensaje. Por favor, inténtalo de nuevo más tarde.",
         variant: "destructive"
       });
     } finally {
@@ -72,9 +105,9 @@ const Contacto = () => {
   };
 
   const contactInfo = [
-    { icon: Phone, label: "Teléfono", value: "+34 846 66 54 92", href: "tel:+34846665492", sub: "Llámanos directamente" },
-    { icon: Mail, label: "Email", value: "manipedilasarenas18@gmail.com", href: "mailto:manipedilasarenas18@gmail.com", sub: "Consultas generales" },
-    { icon: MapPin, label: "Ubicación", value: "Urkijo Kalea, 15, Getxo", href: "https://maps.app.goo.gl/vafawG18eUhB3EJb8", sub: "A 3 min del metro Areeta" },
+    { icon: Phone, label: "Teléfono", value: siteConfig.contact.phone, href: `tel:${siteConfig.contact.phoneHref}`, sub: "Llámanos directamente" },
+    { icon: Mail, label: "Email", value: siteConfig.contact.email, href: `mailto:${siteConfig.contact.email}`, sub: "Consultas generales" },
+    { icon: MapPin, label: "Ubicación", value: `${siteConfig.contact.address}, ${siteConfig.contact.city}`, href: siteConfig.contact.mapsUrl, sub: "A 3 min del metro Areeta" },
   ];
 
   return (
@@ -181,24 +214,7 @@ const Contacto = () => {
                 viewport={{ once: true }}
                 className="glass-card rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden h-64 md:h-72 relative group shadow-2xl border-white/50"
               >
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2902.936666611586!2d-3.0076246234327575!3d43.32604677913419!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd4e5bb090b8e663%3A0xc3f6089cc5938833!2sCalle%20Urquijo%2C%2015%2C%2048930%20Getxo%2C%20Bizkaia!5e0!3m2!1ses!2ses!4v1715456789012!5m2!1ses!2ses"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0, filter: 'grayscale(1) contrast(1.2)' }}
-                  allowFullScreen
-                  loading="lazy"
-                  title="Ubicación"
-                />
-                <div className="absolute inset-0 bg-gold/10 pointer-events-none mix-blend-overlay group-hover:opacity-0 transition-opacity duration-700" />
-                <a
-                  href="https://maps.app.goo.gl/vafawG18eUhB3EJb8"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="absolute bottom-6 right-6 bg-white/90 backdrop-blur-md px-6 py-3 rounded-2xl text-xs font-bold shadow-xl flex items-center gap-2 hover:bg-white transition-all"
-                >
-                  <MapPin size={14} className="text-gold" /> CÓMO LLEGAR
-                </a>
+                <ConsentedMap />
               </motion.div>
             </div>
 
@@ -227,6 +243,8 @@ const Contacto = () => {
                     <input
                       type="text"
                       required
+                      maxLength={FIELD_LIMITS.name}
+                      autoComplete="name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="Ej: Laura García"
@@ -240,6 +258,8 @@ const Contacto = () => {
                     <input
                       type="email"
                       required
+                      maxLength={FIELD_LIMITS.email}
+                      autoComplete="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="laura@ejemplo.com"
@@ -255,12 +275,58 @@ const Contacto = () => {
                   <textarea
                     required
                     rows={4}
+                    maxLength={FIELD_LIMITS.message}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="Escribe aquí tu duda o petición especial..."
                     className="w-full bg-white/50 border-b-2 border-border focus:border-gold outline-none py-4 px-1 transition-all font-medium resize-none placeholder:text-muted-foreground/30"
                   />
+                  <p className="text-[11px] text-muted-foreground">
+                    No incluyas datos de salud ni información sensible: si es relevante para tu
+                    tratamiento, lo valoramos en cabina.
+                  </p>
                 </div>
+
+                {/* Campo trampa antispam: invisible y fuera del foco para las personas usuarias */}
+                <div aria-hidden="true" className="absolute left-[-9999px] top-0 h-0 w-0 overflow-hidden">
+                  <label htmlFor="company-website">No rellenar</label>
+                  <input
+                    id="company-website"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                  />
+                </div>
+
+                {/* Consentimiento informado (art. 6.1.a y 13 RGPD) */}
+                <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-border/60 bg-white/40 p-4">
+                  <input
+                    type="checkbox"
+                    required
+                    checked={acceptedPrivacy}
+                    onChange={(e) => setAcceptedPrivacy(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 flex-shrink-0 accent-[hsl(var(--primary))]"
+                  />
+                  <span className="text-xs leading-relaxed text-muted-foreground">
+                    He leído y acepto la{" "}
+                    <Link to="/privacidad" className="font-bold text-gold underline-offset-4 hover:underline">
+                      Política de Privacidad
+                    </Link>
+                    . Tus datos los trata {siteConfig.name} con la única finalidad de responder a tu
+                    consulta, se conservan un máximo de {siteConfig.retention.contactMessagesMonths}{" "}
+                    meses y no se ceden a terceros con fines comerciales. Puedes ejercer tus derechos
+                    de acceso, rectificación y supresión escribiendo a{" "}
+                    <a
+                      href={`mailto:${siteConfig.contact.privacyEmail}`}
+                      className="font-semibold underline-offset-4 hover:underline"
+                    >
+                      {siteConfig.contact.privacyEmail}
+                    </a>
+                    .
+                  </span>
+                </label>
 
                 <div className="flex flex-col sm:flex-row items-center gap-6 md:gap-8 pt-4">
                   <button

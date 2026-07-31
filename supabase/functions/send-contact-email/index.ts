@@ -2,57 +2,119 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 // @ts-ignore
-const resendApiKey = Deno.env.get("RESEND_API_KEY");
-const resendFrom = Deno.env.get("RESEND_FROM") || "ManiPedi Web <info@manipedibellezaintegral.es>";
-const notifyTo = Deno.env.get("CONTACT_NOTIFICATION_EMAIL") || "manipedilasarenas18@gmail.com";
+const env = (key: string) => Deno.env.get(key);
 
-const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
+const resendApiKey = env("RESEND_API_KEY");
+const resendFrom = env("RESEND_FROM") || "ManiPedi Web <info@manipedibellezaintegral.es>";
+const notifyTo = env("CONTACT_NOTIFICATION_EMAIL") || "manipedilasarenas18@gmail.com";
+/** Secreto compartido con el trigger de la base de datos. Si está definido, se exige. */
+const webhookSecret = env("CONTACT_WEBHOOK_SECRET");
+/** Orígenes autorizados a invocar la función desde el navegador. */
+const allowedOrigins = (env("ALLOWED_ORIGINS") ||
+  "https://manipedilasarenas.com,https://www.manipedilasarenas.com,http://localhost:8080")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const FIELD_LIMITS = { name: 80, email: 120, subject: 120, message: 2000 };
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+/** Límite básico de peticiones por IP dentro de la misma instancia de la función. */
+const RATE_LIMIT = { max: 5, windowMs: 60_000 };
+const requestLog = new Map<string, number[]>();
+
+const isRateLimited = (ip: string) => {
+    const now = Date.now();
+    const hits = (requestLog.get(ip) || []).filter((time) => now - time < RATE_LIMIT.windowMs);
+    hits.push(now);
+    requestLog.set(ip, hits);
+
+    // Evita que el mapa crezca sin control en instancias de larga duración.
+    if (requestLog.size > 500) {
+        for (const [key, times] of requestLog) {
+            if (times.every((time) => now - time >= RATE_LIMIT.windowMs)) requestLog.delete(key);
+        }
+    }
+
+    return hits.length > RATE_LIMIT.max;
 };
 
-interface EmailPayload {
-    name: string;
-    email: string;
-    subject: string;
-    message: string;
-}
+const corsHeaders = (origin: string | null) => ({
+    "Access-Control-Allow-Origin": origin && allowedOrigins.includes(origin) ? origin : allowedOrigins[0],
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-webhook-secret",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Vary": "Origin",
+});
+
+/** Escapa el contenido antes de incrustarlo en el HTML del email. */
+const escapeHtml = (value: string) =>
+    value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
+const clean = (value: unknown, max: number) =>
+    typeof value === "string" ? value.replace(/\s+/g, " ").trim().slice(0, max) : "";
+
+const json = (body: unknown, status: number, origin: string | null) =>
+    new Response(JSON.stringify(body), {
+        status,
+        headers: { ...corsHeaders(origin), "Content-Type": "application/json" },
+    });
 
 // @ts-ignore
 serve(async (req: any) => {
-    // Manejo de CORS explícito
+    const origin = req.headers.get("origin");
+
     if (req.method === "OPTIONS") {
-        return new Response("ok", { headers: corsHeaders, status: 200 });
+        return new Response("ok", { headers: corsHeaders(origin), status: 200 });
+    }
+
+    if (req.method !== "POST") {
+        return json({ error: "Method not allowed" }, 405, origin);
+    }
+
+    // Peticiones desde un navegador: solo desde los orígenes autorizados.
+    // El trigger de la base de datos llama sin cabecera Origin.
+    if (origin && !allowedOrigins.includes(origin)) {
+        return json({ error: "Origin not allowed" }, 403, origin);
+    }
+
+    if (webhookSecret && req.headers.get("x-webhook-secret") !== webhookSecret) {
+        return json({ error: "Unauthorized" }, 401, origin);
+    }
+
+    const ip =
+        req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+        req.headers.get("cf-connecting-ip") ||
+        "unknown";
+
+    if (isRateLimited(ip)) {
+        return json({ error: "Too many requests" }, 429, origin);
     }
 
     try {
-        console.log("send-contact-email: request received", { method: req.method });
-
         if (!resendApiKey) {
-            return new Response(JSON.stringify({ error: "RESEND_API_KEY is not configured" }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 });
+            console.error("send-contact-email: RESEND_API_KEY no configurada");
+            return json({ error: "Email service not configured" }, 500, origin);
         }
 
         const data = await req.json();
-        let payload: EmailPayload;
+        const source = data?.type === "INSERT" && data?.record ? data.record : data;
 
-        if (data.type === "INSERT" && data.record) {
-            payload = {
-                name: data.record.name,
-                email: data.record.email,
-                subject: data.record.subject || "Reserva",
-                message: data.record.message,
-            };
-        } else {
-            payload = data;
+        const name = clean(source?.name, FIELD_LIMITS.name);
+        const email = clean(source?.email, FIELD_LIMITS.email);
+        const subject = clean(source?.subject, FIELD_LIMITS.subject) || "Reserva";
+        const message = clean(source?.message, FIELD_LIMITS.message);
+
+        if (!EMAIL_PATTERN.test(email) || !message) {
+            return json({ error: "Datos de contacto no válidos" }, 400, origin);
         }
 
-        if (!payload.email || !payload.message) {
-            throw new Error("Faltan campos obligatorios");
-        }
-
-        const { name, email, subject, message } = payload;
-        console.log("send-contact-email: payload", { name, email, subject });
+        // No registramos el contenido del mensaje ni los datos de la persona (minimización).
+        console.log("send-contact-email: enviando notificación", { hasName: Boolean(name) });
 
         const res = await fetch("https://api.resend.com/emails", {
             method: "POST",
@@ -69,31 +131,31 @@ serve(async (req: any) => {
                     <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
                         <h2 style="color: #D4AF37;">Nuevo Mensaje desde la Web</h2>
                         <hr />
-                        <p><b>Nombre:</b> ${name}</p>
-                        <p><b>Email:</b> ${email}</p>
-                        <p><b>Asunto:</b> ${subject}</p>
+                        <p><b>Nombre:</b> ${escapeHtml(name)}</p>
+                        <p><b>Email:</b> ${escapeHtml(email)}</p>
+                        <p><b>Asunto:</b> ${escapeHtml(subject)}</p>
                         <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin-top: 20px;">
                             <p><b>Mensaje:</b></p>
-                            <p>${message}</p>
+                            <p>${escapeHtml(message).replace(/\n/g, "<br />")}</p>
                         </div>
                         <footer style="margin-top: 20px; font-size: 12px; color: #888;">
                             Este mensaje fue enviado desde el formulario de contacto de ManiPedi Las Arenas.
+                            Contiene datos personales: trátalo conforme a la política de privacidad.
                         </footer>
                     </div>
-                `
+                `,
             }),
         });
 
-        const responseText = await res.text();
-        console.log("send-contact-email: resend response", { status: res.status, ok: res.ok, responseText });
-
         if (!res.ok) {
-            return new Response(JSON.stringify({ error: responseText }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 502 });
+            // El cuerpo de error de Resend puede incluir la dirección de destino: no se propaga.
+            console.error("send-contact-email: error de Resend", { status: res.status });
+            return json({ error: "No se pudo enviar la notificación" }, 502, origin);
         }
 
-        return new Response(responseText, { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 });
+        return json({ ok: true }, 200, origin);
     } catch (error: any) {
-        console.error("send-contact-email: error", error);
-        return new Response(JSON.stringify({ error: error.message }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 });
+        console.error("send-contact-email: error inesperado", { name: error?.name });
+        return json({ error: "Solicitud no válida" }, 400, origin);
     }
 });

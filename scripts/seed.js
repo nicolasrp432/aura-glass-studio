@@ -7,10 +7,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
-const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY; // Using anon key for now, might need service role for some operations if RLS is tight
+// Escritura sobre tablas protegidas por RLS: requiere la service_role key.
+// Nunca debe incluirse en el frontend ni subirse al repositorio.
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-    console.error('Missing Supabase credentials in .env');
+    console.error('Faltan VITE_SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY en .env (la clave anon ya no tiene permisos de escritura).');
     process.exit(1);
 }
 
