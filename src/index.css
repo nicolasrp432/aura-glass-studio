@@ -285,3 +285,24 @@
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
 }
+
+/* Tipografía de los documentos legales (privacidad, aviso legal, cookies) */
+.legal-prose p {
+  @apply text-[15px] leading-relaxed;
+}
+
+.legal-prose ul {
+  @apply list-disc space-y-2 pl-5 text-[15px] leading-relaxed;
+}
+
+.legal-prose li::marker {
+  @apply text-gold;
+}
+
+.legal-prose a {
+  @apply font-semibold text-gold underline-offset-4 hover:underline;
+}
+
+.legal-prose strong {
+  @apply font-bold text-foreground;
+}
