@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, Calendar, Phone, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { siteConfig } from "@/config/site";
 
 const WhatsAppIcon = ({ className = "w-10 h-10" }: { className?: string }) => (
     <svg
@@ -15,8 +16,8 @@ const WhatsAppIcon = ({ className = "w-10 h-10" }: { className?: string }) => (
 
 const WhatsAppWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const whatsappUrl = "https://wa.me/34944123456";
-    const treatwellUrl = "https://www.treatwell.es/establecimiento/mani-pedi-1/";
+    const whatsappUrl = `https://wa.me/${siteConfig.contact.whatsappHref}`;
+    const treatwellUrl = siteConfig.booking.treatwell;
 
     const menuItems = [
         {

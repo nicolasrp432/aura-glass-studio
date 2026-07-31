@@ -35,6 +35,8 @@ export const siteConfig = {
     phone: "+34 846 66 54 92",
     /** Mismo número en formato E.164, para enlaces tel: */
     phoneHref: "+34846665492",
+    /** Mismo número sin signos, para enlaces wa.me */
+    whatsappHref: "34846665492",
     email: "manipedilasarenas18@gmail.com",
     /** Dirección para el ejercicio de derechos RGPD */
     privacyEmail: "manipedilasarenas18@gmail.com",
@@ -90,3 +92,20 @@ export const siteConfig = {
 } as const;
 
 export const fullAddress = `${siteConfig.contact.address}, ${siteConfig.contact.postalCode} ${siteConfig.contact.city}, ${siteConfig.contact.province}`;
+
+/**
+ * Funcionalidades que no forman parte de la web pública.
+ *
+ * Mantenerlas desactivadas reduce la superficie expuesta: lo que no está
+ * terminado no debe ser accesible desde internet, y así el sitio publicado
+ * solo trata los datos que realmente necesita (art. 5.1.c y 25 RGPD).
+ */
+export const features = {
+  /** Tienda online: en desarrollo. Con `false` no se monta el carrito. */
+  shop: false,
+  /**
+   * Panel de administración: sin terminar. Solo se registran sus rutas si la
+   * build define VITE_ENABLE_ADMIN=true; en producción permanece inaccesible.
+   */
+  admin: import.meta.env.VITE_ENABLE_ADMIN === "true",
+} as const;
