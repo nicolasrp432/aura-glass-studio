@@ -18,6 +18,7 @@ import Cookies from "./pages/legal/Cookies";
 import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import ScrollToTop from "./components/ScrollToTop";
+import { features } from "@/config/site";
 
 const queryClient = new QueryClient();
 
@@ -43,9 +44,18 @@ const App = () => (
           <Route path="/legal" element={<AvisoLegal />} />
           <Route path="/cookies" element={<Cookies />} />
 
-          {/* Admin Routes */}
-          <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          {/*
+            Admin Routes — el panel está sin terminar y no forma parte de la web
+            pública, así que sus rutas solo se registran si la build lo habilita
+            expresamente (VITE_ENABLE_ADMIN=true). En producción no son
+            alcanzables: cualquier acceso a /admin cae en la página 404.
+          */}
+          {features.admin && (
+            <>
+              <Route path="/admin" element={<AdminLogin />} />
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            </>
+          )}
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

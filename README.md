@@ -21,31 +21,34 @@ Documentación profesional del sistema de gestión y portal web para el salón d
 Como usuario o administrador de la plataforma, dispones de las siguientes capacidades:
 
 - **Explorar el Menú de Servicios:** Navegar por un catálogo detallado de tratamientos que incluye manicura, pedicura, lifting de pestañas, limpieza facial y maderoterapia.
-- **Tienda Online Integrada:** Comprar productos de belleza de alta gama con un sistema de carrito de compras y pasarela de pago segura (Stripe).
 - **Galería de Trabajos:** Visualizar una galería fotográfica de alta resolución con los resultados de los tratamientos realizados.
 - **Conocer al Equipo:** Consultar los perfiles de las profesionales encargadas de los servicios.
-- **Contacto Rápido:** Acceso directo a reservas y consultas vía WhatsApp mediante un widget flotante.
-- **Panel de Administración (Dashboard):** 
-    - Visualizar estadísticas de rendimiento.
-    - Gestionar el inventario de servicios y productos.
-    - Administrar las reservas y configuraciones del sitio.
+- **Contacto Rápido:** Formulario de contacto, teléfono y acceso directo a reservas vía WhatsApp y Treatwell.
+- **Información legal:** Política de privacidad, aviso legal y política de cookies, con gestión del consentimiento.
+
+### Módulos en desarrollo (no publicados)
+
+- **Tienda Online:** carrito y pasarela de pago (Stripe). Desactivada mediante `features.shop` en `src/config/site.ts`.
+- **Panel de Administración (Dashboard):** gestión de catálogo, reservas y configuración. Sin terminar.
 
 ---
 
 ## 🔐 Acceso Administrativo
 
-El acceso al panel de control está restringido exclusivamente al personal autorizado.
+> [!IMPORTANT]
+> El panel de administración **está sin terminar y no se publica**. Sus rutas solo se registran si
+> la build define `VITE_ENABLE_ADMIN=true`; en producción, `/admin` devuelve la página 404.
+> Mientras tanto, los mensajes del formulario de contacto llegan por email y los datos se consultan
+> desde el panel de Supabase, con acceso limitado al personal autorizado.
 
-*   **URL de Acceso:** `/admin`
-*   **Correo Electrónico de Administración:** `admin@manipedigexto.com`
+Para trabajar en el panel en local, arranca el proyecto con la variable habilitada:
 
-### Instrucciones de Acceso
-1. Dirígete a la ruta [tu-dominio.com/admin](https://manipedigetxo.com/admin).
-2. Introduce el correo electrónico mencionado arriba y la contraseña correspondiente.
-3. Tras la validación, serás redirigido automáticamente al Dashboard de administración.
+```bash
+VITE_ENABLE_ADMIN=true npm run dev
+```
 
-> [!WARNING]
-> **Nota de Seguridad:** Las credenciales de administrador son confidenciales. Por favor, asegúrate de cerrar sesión al finalizar tu trabajo y nunca compartas tus datos de acceso con terceros no autorizados.
+Las credenciales son confidenciales y no deben figurar en este repositorio. La documentación de
+protección de datos del proyecto está en [`docs/AUDITORIA-PROTECCION-DATOS.md`](docs/AUDITORIA-PROTECCION-DATOS.md).
 
 ---
 

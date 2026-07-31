@@ -62,6 +62,35 @@ const Privacidad = () => (
         alguna condición relevante para la seguridad de un tratamiento, te lo preguntaremos en el
         propio centro.
       </p>
+      <p>
+        Esta web <strong>no elabora perfiles, no envía comunicaciones comerciales automatizadas y no
+        realiza pagos en línea</strong>. Las reservas se gestionan por teléfono, WhatsApp o a través
+        de Treatwell.
+      </p>
+    </LegalSection>
+
+    <LegalSection title="2 bis. Contenidos publicados en la web">
+      <ul>
+        <li>
+          <strong>Opiniones de clientas.</strong> Publicamos reseñas con el nombre de pila (o nombre
+          e inicial), la valoración y el servicio recibido. Proceden de reseñas que las propias
+          personas han publicado en plataformas públicas o que nos han autorizado a difundir.
+          <br />
+          <em>Base jurídica:</em> consentimiento e interés legítimo en mostrar la valoración de
+          nuestro trabajo (arts. 6.1.a y 6.1.f RGPD). Si aparece una opinión tuya y prefieres que la
+          retiremos, escríbenos y la eliminaremos sin necesidad de justificación.
+        </li>
+        <li>
+          <strong>Fotografías del equipo.</strong> Mostramos el nombre, la fotografía y la
+          especialidad de las profesionales del centro, con su consentimiento y en el marco de la
+          relación laboral.
+        </li>
+        <li>
+          <strong>Galería de trabajos.</strong> Son fotografías de manicuras, pedicuras y
+          tratamientos realizados. Cuando en una imagen resulta identificable una persona, se
+          publica únicamente con su consentimiento previo, que puede retirarse en cualquier momento.
+        </li>
+      </ul>
     </LegalSection>
 
     <LegalSection title="3. Durante cuánto tiempo conservamos tus datos">
@@ -134,9 +163,10 @@ const Privacidad = () => (
     <LegalSection title="6. Seguridad de la información">
       <p>
         Aplicamos medidas técnicas y organizativas apropiadas para proteger tus datos: cifrado del
-        tráfico mediante HTTPS, control de acceso por roles al panel de administración con
-        autenticación por contraseña, políticas de seguridad a nivel de fila en la base de datos que
-        impiden el acceso público a los datos de clientes, y minimización de los datos solicitados.
+        tráfico mediante HTTPS, políticas de seguridad a nivel de fila en la base de datos que
+        impiden el acceso público a los datos de clientes, acceso restringido al personal autorizado
+        mediante autenticación, política de seguridad de contenidos y cabeceras de seguridad en el
+        servidor, y minimización de los datos que se solicitan.
       </p>
     </LegalSection>
 

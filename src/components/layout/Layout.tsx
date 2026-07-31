@@ -5,6 +5,7 @@ import FloatingOrbs from "./FloatingOrbs";
 import CartDrawer from "../cart/CartDrawer";
 import WhatsAppWidget from "./WhatsAppWidget";
 import CookieConsent from "../legal/CookieConsent";
+import { features } from "@/config/site";
 
 interface LayoutProps {
   children: ReactNode;
@@ -17,7 +18,9 @@ const Layout = ({ children }: LayoutProps) => {
       <Navbar />
       <main className="relative z-10">{children}</main>
       <Footer />
-      <CartDrawer />
+      {/* La tienda está en desarrollo: sin ella, el carrito no se monta ni
+          guarda nada en el navegador. */}
+      {features.shop && <CartDrawer />}
       <WhatsAppWidget />
       <CookieConsent />
     </div>

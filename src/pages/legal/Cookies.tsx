@@ -29,15 +29,10 @@ const Cookies = () => (
           volver a preguntártelo. Duración: 12 meses. Almacenamiento local, no se envía a ningún
           servidor.
         </li>
-        <li>
-          <strong>cart-storage</strong> — recuerda los productos que añades a la cesta mientras
-          navegas. Duración: hasta que vacías la cesta o borras los datos del navegador.
-        </li>
-        <li>
-          <strong>Sesión de administración</strong> — únicamente para el personal autorizado que
-          accede al panel privado, para mantener la sesión iniciada de forma segura.
-        </li>
       </ul>
+      <p>
+        Eso es todo. La web no instala ninguna otra cookie ni almacena nada más en tu dispositivo.
+      </p>
       <p>
         <strong>No usamos</strong> Google Analytics, píxel de Meta, cookies publicitarias, mapas de
         calor ni ninguna herramienta que elabore perfiles sobre ti.

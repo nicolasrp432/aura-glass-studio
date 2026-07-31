@@ -189,8 +189,8 @@ const Contacto = () => {
                   </div>
                   <div className="flex gap-4">
                     {[
-                      { icon: Instagram, href: "https://www.instagram.com/manipedilasarenas/", label: "Instagram" },
-                      { icon: Facebook, href: "https://www.facebook.com/manipedilarenas", label: "Facebook" }
+                      { icon: Instagram, href: siteConfig.social.instagram, label: "Instagram" },
+                      { icon: Facebook, href: siteConfig.social.facebook, label: "Facebook" }
                     ].map((social) => (
                       <a
                         key={social.label}

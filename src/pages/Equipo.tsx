@@ -4,6 +4,7 @@ import { Star, Sparkles, Instagram, Facebook, MessageCircle } from "lucide-react
 import Layout from "@/components/layout/Layout";
 import servicesData from "@/data/services.json";
 import { supabase } from "@/lib/supabase";
+import { siteConfig } from "@/config/site";
 
 const team = servicesData.team;
 const colors = ["from-primary to-accent", "from-accent to-rose", "from-primary/80 to-gold", "from-gold to-accent", "from-rose to-primary", "from-accent to-primary"];
@@ -160,13 +161,13 @@ const Equipo = () => {
 
                       {/* Redes Sociales - Flotando abajo */}
                       <div className="flex items-center justify-center gap-4 mt-6">
-                        <a href="https://www.instagram.com/manipedilasarenas/" target="_blank" rel="noopener noreferrer" className="bg-white/10 hover:bg-white text-white hover:text-primary p-3 rounded-full transition-all duration-300 hover:scale-110 shadow-lg">
+                        <a href={siteConfig.social.instagram} target="_blank" rel="noopener noreferrer" className="bg-white/10 hover:bg-white text-white hover:text-primary p-3 rounded-full transition-all duration-300 hover:scale-110 shadow-lg">
                           <Instagram size={18} />
                         </a>
-                        <a href="https://www.facebook.com/manipedilasarenas" target="_blank" rel="noopener noreferrer" className="bg-white/10 hover:bg-white text-white hover:text-primary p-3 rounded-full transition-all duration-300 hover:scale-110 shadow-lg">
+                        <a href={siteConfig.social.facebook} target="_blank" rel="noopener noreferrer" className="bg-white/10 hover:bg-white text-white hover:text-primary p-3 rounded-full transition-all duration-300 hover:scale-110 shadow-lg">
                           <Facebook size={18} />
                         </a>
-                        <a href="https://wa.me/34944123456" target="_blank" rel="noopener noreferrer" className="bg-white/10 hover:bg-white text-white hover:text-primary p-3 rounded-full transition-all duration-300 hover:scale-110 shadow-lg">
+                        <a href={`https://wa.me/${siteConfig.contact.whatsappHref}`} target="_blank" rel="noopener noreferrer" className="bg-white/10 hover:bg-white text-white hover:text-primary p-3 rounded-full transition-all duration-300 hover:scale-110 shadow-lg">
                           <MessageCircle size={18} />
                         </a>
                       </div>

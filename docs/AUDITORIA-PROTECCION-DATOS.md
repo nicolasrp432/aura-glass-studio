@@ -5,6 +5,24 @@
 **Alcance:** código del repositorio, configuración de la base de datos y de la Edge Function,
 cumplimiento del RGPD/LOPDGDD y de la LSSI-CE en la parte pública del sitio.
 
+### Qué está publicado y qué no
+
+La auditoría se centra en **la web pública**, que es lo que se somete a control: inicio, servicios,
+tratamientos de cabina, galería, equipo, contacto y las páginas legales. En esa parte, el único
+tratamiento de datos que se origina en la web es **el formulario de contacto**.
+
+Dos módulos quedan fuera porque no están terminados y no deben ser accesibles:
+
+- **Tienda online** — ya estaba oculta (rutas y carrito comentados). Ahora, además, el carrito no se
+  monta (`features.shop = false`), de modo que no guarda nada en el navegador.
+- **Panel de administración** — sin terminar. Sus rutas solo se registran si la build define
+  `VITE_ENABLE_ADMIN=true`; en producción `/admin` cae en la página 404. Mientras tanto, la gestión
+  de los datos se hace desde el panel de Supabase, y los mensajes del formulario llegan por email.
+
+Las medidas aplicadas en la base de datos siguen siendo necesarias aunque el panel esté apagado: el
+formulario público escribe en Supabase con la clave anon, así que las políticas RLS son la única
+barrera real que protege esos datos.
+
 > Este documento describe el estado del proyecto y las acciones aplicadas en el repositorio.
 > Las tareas de la sección «Pendiente» requieren acceso a paneles externos (Supabase, Stripe,
 > hosting) y no pueden resolverse desde el código.
@@ -128,6 +146,11 @@ Sin límite de longitud, sin antispam y sin control de bots.
 
 | Hallazgo | Acción |
 | --- | --- |
+| `/admin` (panel sin terminar) accesible desde internet | Rutas desactivadas salvo `VITE_ENABLE_ADMIN=true` |
+| Carrito montado en todas las páginas con la tienda oculta | Solo se monta si `features.shop` está activo |
+| Opiniones de clientas y fotos del equipo publicadas sin cobertura informativa | Apartado específico en la política de privacidad, con derecho de retirada |
+| Número de WhatsApp incorrecto en el widget y en la página de Equipo (`34944123456`) | Corregido al número real y centralizado |
+| Perfil de Facebook con dos direcciones distintas en el código | Unificado en `src/config/site.ts` (**verificar cuál es la correcta**) |
 | `.env.example` contenía la URL y la clave publicable reales del proyecto | Sustituidas por marcadores |
 | Scripts de seeding escribiendo con la clave anon (dependían del agujero de RLS) | Ahora exigen `SUPABASE_SERVICE_ROLE_KEY` |
 | `robots.txt` permitía indexar `/admin` | `Disallow: /admin` + `X-Robots-Tag: noindex` y `sitemap.xml` |
@@ -179,9 +202,11 @@ Ordenadas por urgencia.
 2. **🔴 Aplicar las migraciones nuevas en Supabase.** Mientras no se ejecuten
    `20260731_data_protection_hardening.sql` y `20260731_contact_trigger_secret.sql`, las reservas
    siguen expuestas. Ejecutar en el SQL Editor del proyecto, en ese orden.
-3. **🔴 Asignar el rol de administración** a las cuentas del personal:
+3. **🟠 Asignar el rol de administración** cuando se retome el panel:
    `supabase.auth.admin.updateUserById(<id>, { app_metadata: { role: 'admin' } })`, con la
-   service_role key. Después puede eliminarse el email de respaldo de `public.is_admin()`.
+   service_role key. Después puede eliminarse el email de respaldo de `public.is_admin()`. Mientras
+   el panel siga desactivado, los mensajes se reciben por email y se consultan desde el panel de
+   Supabase.
 4. **🟠 Completar los datos legales** marcados como `[COMPLETAR]` en `src/config/site.ts`:
    denominación social o nombre del titular, NIF y domicilio. Sin ellos, el aviso legal no cumple el
    art. 10 LSSI-CE.
@@ -195,8 +220,10 @@ Ordenadas por urgencia.
    RGPD) y contratos de encargo firmados con Supabase, Resend, Google y Treatwell.
 8. **🟡 Consentimiento de imagen** de las fotografías de la galería y del equipo en las que aparecen
    personas identificables.
-9. **🟡 Verificar el número de WhatsApp**: el widget apunta a `wa.me/34944123456`, que no coincide
-   con el teléfono publicado. No se ha modificado porque se desconoce cuál es el correcto.
+9. **🟡 Comprobar el enlace de WhatsApp y el perfil de Facebook**: el widget ya apunta al número
+   real (+34 846 66 54 92); confirma que esa línea tiene WhatsApp activo. En el código convivían dos
+   direcciones de Facebook distintas (`manipedilarenas` y `manipedilasarenas`); se ha unificado en
+   `src/config/site.ts` y conviene verificar cuál es la buena.
 10. **🟡 Actualizaciones diferidas**: `vite` y `esbuild` tienen avisos que solo afectan al servidor de
     desarrollo y su corrección exige un salto de versión mayor; `react-router` mantiene un aviso de
     *open redirect* cuya solución definitiva es migrar a la versión 7. Ninguno afecta al sitio
